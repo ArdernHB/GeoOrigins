@@ -1,0 +1,19 @@
+Package: GeoOrigins
+Title: What the Package Does (one line, title case)
+Version: 0.0.0.9000
+Authors@R: person("First", "Last", email = "first.last@example.com", role = c("aut", "cre"))
+Description: What the package does (one paragraph).
+Depends: R (>= 3.5.3)
+License: What license is it under?
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 6.1.1
+Imports:
+    grDevices (>= 3.3.0),
+    ks (>= 1.10.7),
+    maps (>= 3.2.0),
+    raster (>= 2.5-8),
+    shapes (>= 1.1-13),
+    sp
+Suggests: 
+    testthat
