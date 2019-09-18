@@ -7,7 +7,7 @@ Author: Ardern Hulme-Beaman [aut, cre], Anna Rudzinski [ctb]
 Maintainer: Ardern Hulme-Beaman <ardernhb@gmail.com>
 Description: Provenancing specimens of unknown origin and identifying trait boundaries. For publication purposes please cite Hulme-Beaman, A., Rudzinski, A., Cooper, J., Lachlan, R., Dobney, K., Thomas, M.G. (XXXX) GeoOrigins: Trait mapping and geographic provenancing of specimens without categorical constraints. XXXX
 Depends: R (>= 3.5)
-License: CC0
+License: GPL-2
 Encoding: UTF-8
 LazyData: true
 URL: https://github.com/ArdernHB/GeoOrigins
