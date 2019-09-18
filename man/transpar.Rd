@@ -17,9 +17,6 @@ The transparent equivalent of a named colour
 \description{
 This function takes a named colour and returns the transparent equivalent
 }
-\examples{
-transpar(Colour = 'red', alpha = 50)
-}
 \author{
 Ardern Hulme-Beaman
 }

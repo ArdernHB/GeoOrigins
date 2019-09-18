@@ -1,6 +1,6 @@
 
 
-#' Returns the geographic provenance of a specimen
+#' Spatially provenance a specimen from distance data
 #'
 #' This function takes the distances from an unknown specimen to all reference specimens
 #' and uses these distances to calculate a likely spatial provenance. Note that this
@@ -34,7 +34,10 @@
 #' @export
 
 
-IDbyDistance.DistInput <- function(Lat.Longs=data.frame(Lats=c(), Longs=c()), Dist.data.vec=Dist, LongRange=c(0,0), LatRange=c(0,0), Range.Samp=10, verbose=TRUE, print.prog=FALSE, Validate= FALSE, Valid.LatLongs=c(Lat, Long), Plot.Res=TRUE, HeatHue= c(.1, 1), Tile.Size=2, plot.Prov=FALSE, plot.Val.cor=as.numeric(X)){
+IDbyDistance.DistInput <- function(Lat.Longs, Dist.data.vec, LongRange, LatRange, Range.Samp=10, verbose=TRUE, print.prog=FALSE, Validate= FALSE, Valid.LatLongs, Plot.Res=TRUE, HeatHue= c(.15, 1), Tile.Size=2, plot.Prov=FALSE, plot.Val.cor){
+  #Lat.Longs = cbind(RatLatLongData$Lat, RatLatLongData$Long)[-1,]; Dist.data.vec = RatDistMat[-1,1]; LongRange = Long.Range; LatRange = Lat.Range; Range.Samp = R.Samp; verbose = FALSE; Validate = FALSE
+  #Lat.Longs = NEFtInfo[-1,2:3]; Dist.data.vec = NEDisMat[-1,1]; LongRange = NEFt.Long.Range; LatRange = NEFt.Lat.Range; Range.Samp = NEFtR.Samp; verbose = FALSE; Validate = FALSE; plot.Val.cor = NEFtrThres$`Provenancing.Correlation.95%.Confidence`; plot.Prov = TRUE
+  #Lat.Longs = RpraetorLatLong; Dist.data.vec = RatDistMat[-1,1]; LongRange = Long.Range; LatRange = Lat.Range; Range.Samp = R.Samp; verbose = FALSE; Validate = FALSE; plot.Val.cor = rThres$`Provenancing.Correlation.95%.Confidence`; plot.Prov = TRUE
 
   #making Lat.Longs a dataframe
   Lat.Longs <- as.data.frame(Lat.Longs)
@@ -56,11 +59,10 @@ IDbyDistance.DistInput <- function(Lat.Longs=data.frame(Lats=c(), Longs=c()), Di
   #but see IDbyDistance.RawData.ccv function for looping to be done automatically
   if (Validate==TRUE){
 
-    Valid.LatLongs <- as.data.frame(Valid.LatLongs)
-    colnames(Valid.LatLongs) <- c("Lats", "Longs")
+    names(Valid.LatLongs) <- c("Lats", "Longs")
 
     #This generates all the distances from the point on the map to all the specimen locations
-    Geographic.Dists <- Geo.Dist2Point(RefLatLongs = Lat.Longs, TargetLatLong = c(Valid.LatLongs$Lats, Valid.LatLongs$Longs))
+    Geographic.Dists <- Geo.Dist2Point(RefLatLongs = Lat.Longs, TargetLatLong = Valid.LatLongs)
 
 
     #running the correlation to generate r
@@ -68,7 +70,7 @@ IDbyDistance.DistInput <- function(Lat.Longs=data.frame(Lats=c(), Longs=c()), Di
 
 
     #combining the individual results and organising them
-    results <- c(Valid.LatLongs$Lats, Valid.LatLongs$Longs, CorRes$estimate)
+    results <- c(Valid.LatLongs, CorRes$estimate)
 
     #adding the results of this round to the previous results
     CoordsHeat <- rbind(CoordsHeat, results)
@@ -105,12 +107,15 @@ IDbyDistance.DistInput <- function(Lat.Longs=data.frame(Lats=c(), Longs=c()), Di
     #carrying out iterative analyses across the geographic region defined by LongRange and LatRange
     for (i in Longways){
       for (j in Latways){
+        #i <- Longways[1]
+        #j <- Latways[1]
+
         coord <- c(j, i)
 
         Geographic.Dists <- Geo.Dist2Point(RefLatLongs = Lat.Longs, TargetLatLong = coord)
 
         #running the correlation to generate r
-        CorRes <- cor.test(x = Shape.Dist, y = Geographic.Dists)
+        CorRes <- stats::cor.test(x = Shape.Dist, y = Geographic.Dists)
 
         #combining the individual results and organising them
         results <- c(as.character(j),i, CorRes$estimate)
@@ -141,38 +146,55 @@ IDbyDistance.DistInput <- function(Lat.Longs=data.frame(Lats=c(), Longs=c()), Di
   #or we don't and we're not yet interested in it
   if (Validate==FALSE){
     if (Plot.Res==TRUE){
-      maps::map("world", xlim=c(min(Longways), max(Longways)), ylim=c(min(Latways), max(Latways)), interior=FALSE, col="black", bg=par(bg="white"))
+      maps::map("world", xlim=c(min(Longways), max(Longways)), ylim=c(min(Latways), max(Latways)), interior=FALSE, col="black", bg=graphics::par(bg="white"))
 
 
       #creating colour scale from max and min slope based on which variable we're using
-      CoordsHeatNum <- chr2nu(CoordsHeat$Cor.Slope)
+      CoordsHeatNum <- chr2nu(CoordsHeat$Cor)
       OriginLoc <- CoordsHeat[which(CoordsHeatNum==max(CoordsHeatNum)),]
 
 
       CoordsHeatscaled <- (CoordsHeatNum-min(CoordsHeatNum))/(max(CoordsHeatNum)-min(CoordsHeatNum))
 
-      CoordsHeats <- hsv(h = HeatHue[1], v = 1, s = CoordsHeatscaled, alpha = HeatHue[2])
+      CoordsHeats <- grDevices::hsv(h = HeatHue[1], v = 1, s = CoordsHeatscaled, alpha = HeatHue[2])
 
       #plotting the correlations
-      points(x = as.character(CoordsHeat$Long), y = as.character(CoordsHeat$Lat), pch=15, col=CoordsHeats,  cex=Tile.Size)
+      graphics::points(x = as.character(CoordsHeat$Long), y = as.character(CoordsHeat$Lat), pch=15, col=CoordsHeats,  cex=Tile.Size)
 
       #here if we want to plot a polygon of the region that
       #approximates the region the specimens came from (with whatever level of confidence we have selected)
       if (plot.Prov==TRUE){
-        Select.95.conf <- which(chr2nu(CoordsHeat$Cor.Slope)>plot.Val.cor)
+        Select.95.conf <- which(chr2nu(CoordsHeat$Cor)>plot.Val.cor)
 
         ApproxOrigin <- CoordsHeat[Select.95.conf,]
 
-        contour.95 <-  Construct_contour(ApproxOrigin)
-        polycol <- hsv(h = HeatHue[1], s = 1, v = .8, alpha = HeatHue[2])
+        Latvar <- stats::var(chr2nu(ApproxOrigin$Lats))
+        Longvar <- stats::var(chr2nu(ApproxOrigin$Longs))
 
-        polygon(contour.95$x, contour.95$y, col=NA, border=polycol, lwd=2)
+        if (is.na(Latvar)){
+          RthresMessage <- paste("A provenancing region was not identified at this r threshold. R threshold set to:", plot.Val.cor, sep = "   ")
+          MaxCorMessage <- paste("The maximum correlation value acheived was:", max(chr2nu(CoordsHeat$Cor)), sep = "   ")
+          WarningMessage <- "This may be because the resolution used is too low so the likely origin region has been overlooked or alternatively the specimen could not be successfully identified because the reference material does not suffieciently reflect the morphology of the unknown specimen. Please adjust the sampling resolution by changing the R.Samp argument or change the r threshold or consider the specimen unidentifiable to a given region."
+          warning(paste(RthresMessage, MaxCorMessage, WarningMessage, sep = " "))
+
+        } else if (Latvar==0 || Longvar==0){
+          warning("The resolution used for identifying a region of identification is too low to plot a polygon of the likely region of origin. Therefore, the grid squares that were identified by the r threshold as a possible region of origin have been highlighted. Please set the R.Samp argument to a higher value if a polygon of the most likely region of origin is desired.")
+          polycol <- grDevices::hsv(h = HeatHue[1], s = 1, v = .8, alpha = HeatHue[2])
+          graphics::points(x = as.character(ApproxOrigin$Longs), y = as.character(ApproxOrigin$Lats), pch=22, bg=polycol,  cex=Tile.Size+.1)
+        } else {
+
+          contour.95 <-  Construct_contour(ApproxOrigin)
+          polycol <- grDevices::hsv(h = HeatHue[1], s = 1, v = .8, alpha = HeatHue[2])
+
+          graphics::polygon(contour.95$x, contour.95$y, col=NA, border=polycol, lwd=2)
+
+        }
 
       }
 
-      maps::map("world", xlim=c(min(Longways), max(Longways)), ylim=c(min(Latways), max(Latways)), interior=FALSE, col="black", bg=par(bg="white"), add=T)
+      maps::map("world", xlim=c(min(Longways), max(Longways)), ylim=c(min(Latways), max(Latways)), interior=FALSE, col="black", bg=graphics::par(bg="white"), add=T)
 
-      points(x = as.character(Lat.Longs$Long), y = as.character(Lat.Longs$Lat), pch=23, bg='orange',  cex=1)
+      graphics::points(x = as.character(Lat.Longs$Long), y = as.character(Lat.Longs$Lat), pch=23, bg='orange',  cex=1)
       maps::map.axes()
     }
   }
@@ -181,7 +203,7 @@ IDbyDistance.DistInput <- function(Lat.Longs=data.frame(Lats=c(), Longs=c()), Di
   if (verbose==TRUE|Validate==TRUE){
     return(CoordsHeat)
   } else {
-    OriginLocCor <- CoordsHeat[which(CoordsHeat$Cor.Slope==max(chr2nu(CoordsHeat$Cor.Slope), na.rm = TRUE)),]
+    OriginLocCor <- CoordsHeat[which(CoordsHeat$Cor==max(chr2nu(CoordsHeat$Cor), na.rm = TRUE)),]
 
     return(list(Cor=OriginLocCor))
   }
@@ -215,9 +237,10 @@ IDbyDistance.DistInput <- function(Lat.Longs=data.frame(Lats=c(), Longs=c()), Di
 #' http://www.sciviews.org/SciViews-R.
 #'
 #' @author Ardern Hulme-Beaman
+#' @export
 
 
-IDbyDistance.DistInput.CCV <- function(Lat.Longs=data.frame(Lats=c(), Longs=c()), Dist.data.mat=DistMat, verbose=TRUE, print.prog=TRUE, Prov.Confidence=0.95){
+IDbyDistance.DistInput.CCV <- function(Lat.Longs, Dist.data.mat, verbose=TRUE, print.prog=TRUE, Prov.Confidence=0.95){
 
   #making Lat.Longs a dataframe
   Lat.Longs <- as.data.frame(Lat.Longs)
@@ -225,9 +248,9 @@ IDbyDistance.DistInput.CCV <- function(Lat.Longs=data.frame(Lats=c(), Longs=c())
 
 
   #creating an empty object to be populated by results
-  CoordsHeat <- NULL
+  CoordsHeat <- matrix(NA, nrow = dim(Dist.data.mat)[1], ncol = 3)
 
-  for (i in 1:dim(total.shape)[1]){
+  for (i in 1:dim(Dist.data.mat)[1]){
     #i <- 1
 
     Shape.Dist <- Dist.data.mat[-i,i]
@@ -242,13 +265,13 @@ IDbyDistance.DistInput.CCV <- function(Lat.Longs=data.frame(Lats=c(), Longs=c())
 
 
     #combining the individual results and organising them
-    results <- c(Valid.LatLongs$Lats, Valid.LatLongs$Longs, CorRes$estimate)
+    results <- c(Lat.Longs$Lats[i], Lat.Longs$Longs[i], CorRes$estimate)
 
     #adding the results of this round to the previous results
-    CoordsHeat <- rbind(CoordsHeat, results)
+    CoordsHeat[i,] <- results
 
     if (print.prog==TRUE){
-      svMisc::progress(value = i, max.value = dim(total.shape)[1], progress.bar = FALSE)
+      svMisc::progress(value = i, max.value = dim(Dist.data.mat)[1], progress.bar = FALSE)
       Sys.sleep(0.01)
 
     }
@@ -260,7 +283,7 @@ IDbyDistance.DistInput.CCV <- function(Lat.Longs=data.frame(Lats=c(), Longs=c())
   #naming the variables
   names(CoordsHeat) <- c("Lats", "Longs", "Cor")
 
-  ProvCor <- quantile(CoordsHeat$Cor, 1-Prov.Confidence)
+  ProvCor <- stats::quantile(CoordsHeat$Cor, 1-Prov.Confidence)
 
   if (verbose==TRUE){
 

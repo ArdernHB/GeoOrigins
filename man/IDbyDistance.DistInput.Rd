@@ -2,25 +2,24 @@
 % Please edit documentation in R/SpatialProvDistInput_function.R
 \name{IDbyDistance.DistInput}
 \alias{IDbyDistance.DistInput}
-\title{Returns the geographic provenance of a specimen}
+\title{Spatially provenance a specimen from distance data}
 \usage{
-IDbyDistance.DistInput(Lat.Longs = data.frame(Lats = c(), Longs = c()),
-  Dist.data.vec = Dist, LongRange = c(0, 0), LatRange = c(0, 0),
+IDbyDistance.DistInput(Lat.Longs, Dist.data.vec, LongRange, LatRange,
   Range.Samp = 10, verbose = TRUE, print.prog = FALSE,
-  Validate = FALSE, Valid.LatLongs = c(Lat, Long), Plot.Res = TRUE,
-  HeatHue = c(0.1, 1), Tile.Size = 2, plot.Prov = FALSE,
-  plot.Val.cor = as.numeric(X))
+  Validate = FALSE, Valid.LatLongs, Plot.Res = TRUE,
+  HeatHue = c(0.15, 1), Tile.Size = 2, plot.Prov = FALSE,
+  plot.Val.cor)
 }
 \arguments{
 \item{Lat.Longs}{a matrix of n rows by 2 columns where n is the number of reference specimens in your dataset and the columns are Latitude and Longitude values in that order. These latitude-longitude coordinates should be of the locations of the reference specimens.}
 
 \item{Dist.data.vec}{is a vector of distances from each reference specimen to the specimen of interest (either a specimen with unknown provenance or another reference specimen that the user is interested in validating the provenance of)}
 
-\item{LongRange}{is a vector of two elements defining the maximum and minimum Longitude values that the provenancing method should explore. This will also define the mapping range in the final plotted output.}
+\item{LongRange}{is a vector of 2 elements defining the maximum and minimum Longitude values that the provenancing method should explore. This will also define the mapping range in the final plotted output.}
 
-\item{LatRange}{is a vector of two elements defining the maximum and minimum Latitude values that the provenancing method should explore. This will also define the mapping range in the final plotted output.}
+\item{LatRange}{is a vector of 2 elements defining the maximum and minimum Latitude values that the provenancing method should explore. This will also define the mapping range in the final plotted output.}
 
-\item{Range.Samp}{is an integer vector of one or two elements that defines the resolution of spatial sampling. If one element is provided then both the latitude and longitude ranges are equally and evenly sampled using this value. If two elements are provided they should be in the order of latitude longitude and each range will be evenly sampled with its respective value.}
+\item{Range.Samp}{is an integer vector of 1 or 2 elements that defines the resolution of spatial sampling. If one element is provided then both the latitude and longitude ranges are equally and evenly sampled using this value. If 2 elements are provided they should be in the order of latitude longitude and each range will be evenly sampled with its respective value.}
 
 \item{verbose}{logical whether or not a matrix of spatial correlation values is returned or not. Default is set to TRUE.}
 
@@ -32,7 +31,7 @@ IDbyDistance.DistInput(Lat.Longs = data.frame(Lats = c(), Longs = c()),
 
 \item{Plot.Res}{logical whether or not to plot the provenancing map with heat values of most likely spatial origin.}
 
-\item{HeatHue}{numeric vector of two elements each between 0 and 1. The first should be the hue value on the HSV scale; the second value should be the level of transparency of the colour used.}
+\item{HeatHue}{numeric vector of 2 elements each between 0 and 1. The first should be the hue value on the HSV scale; the second value should be the level of transparency of the colour used.}
 
 \item{Tile.Size}{numeric to dictate the pixel size of the heat mapping colour values.}
 

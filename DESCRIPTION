@@ -1,10 +1,13 @@
 Package: GeoOrigins
-Title: What the Package Does (one line, title case)
-Version: 0.0.0.9000
-Authors@R: person("First", "Last", email = "first.last@example.com", role = c("aut", "cre"))
-Description: What the package does (one paragraph).
-Depends: R (>= 3.5.3)
-License: What license is it under?
+Title: Spatial exploration of trait boundaries and provenance
+Version: 1.0.0.000
+Date: 2019-09-06
+Authors@R: c(person("Ardern", "Hulme-Beaman", email = "ardernhb@gmail.com", role = c("aut", "cre")), person("Anna", "Rudzinski", role = c("ctb")))
+Author: Ardern Hulme-Beaman [aut, cre], Anna Rudzinski [ctb]
+Maintainer: Ardern Hulme-Beaman <ardernhb@gmail.com>
+Description: Provenancing specimens of unknown origin and identifying trait boundaries. For publication purposes please cite Hulme-Beaman, A., Rudzinski, A., Cooper, J., Lachlan, R., Dobney, K., Thomas, M.G. (XXXX) GeoOrigins: Trait mapping and geographic provenancing of specimens without categorical constraints. XXXX
+Depends: R (>= 3.5)
+License: CC0
 Encoding: UTF-8
 LazyData: true
 URL: https://github.com/ArdernHB/GeoOrigins
@@ -12,10 +15,16 @@ BugReports: https://github.com/ArdernHB/GeoOrigins
 RoxygenNote: 6.1.1
 Imports:
     grDevices (>= 3.3.0),
+    geosphere (>= 1.5-7),
     ks (>= 1.10.7),
     maps (>= 3.2.0),
     raster (>= 2.5-8),
     shapes (>= 1.1-13),
-    sp
+    sp (>= 1.3-1),
+    rgeos (>= 0.4-3),
+    svMisc (>= 1.1.0)
 Suggests: 
-    testthat
+    testthat,
+    knitr,
+    rmarkdown
+VignetteBuilder: knitr

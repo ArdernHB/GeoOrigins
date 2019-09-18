@@ -2,23 +2,21 @@
 % Please edit documentation in R/SpatialProvRawData_function.R
 \name{IDbyDistance.RawData}
 \alias{IDbyDistance.RawData}
-\title{Returns the geographic provenance of a shape specimen}
+\title{Spatially provenance a specimen from shape data}
 \usage{
-IDbyDistance.RawData(Lat.Longs = data.frame(Lats = c(), Longs = c()),
-  Target.Shape = c(X1, Y1, X2, Y2), Ref.Shape = matrix(rbind(c(X1, Y1,
-  X2, Y2), c(X1, Y1, X2, Y2))), Shape.Data = TRUE, Shape.dim = 2,
-  DistMethod = c("Euc", "Proc"), LongRange = c(0, 0), LatRange = c(0,
-  0), Range.Samp = 10, verbose = TRUE, print.prog = FALSE,
-  Validate = FALSE, Valid.LatLongs = c(Lat, Long), Plot.Res = TRUE,
-  HeatHue = c(0.1, 1), Tile.Size = 2, plot.Prov = FALSE,
-  plot.Val.cor = as.numeric(X))
+IDbyDistance.RawData(Lat.Longs, Target.data, Ref.data, Shape.Data = TRUE,
+  Shape.dim = 2, DistMethod = c("Euc", "Proc"), LongRange = c(0, 0),
+  LatRange = c(0, 0), Range.Samp = 10, verbose = TRUE,
+  print.prog = FALSE, Validate = FALSE, Valid.LatLongs,
+  Plot.Res = TRUE, HeatHue = c(0.15, 1), Tile.Size = 2,
+  plot.Prov = FALSE, plot.Val.cor)
 }
 \arguments{
 \item{Lat.Longs}{a matrix of n rows by 2 columns where n is the number of reference specimens in your dataset and the columns are Latitude and Longitude values in that order. These latitude-longitude coordinates should be of the locations of the reference specimens.}
 
-\item{Target.Shape}{is a vector of superimposed geometric morphometric coordinated in the format X1, Y1, X2, Y2... etc. (or a vector of other standardised variables that can appropriately have euclidean distances calculated between it and reference variables). NB if applied to a reference collection specimen be sure to remove it from the Ref.Shape dataset.}
+\item{Target.data}{is a vector of unknown specimen data. If it is geometric morphometric data is should be a vector of superimposed coordinated in the format X1, Y1, X2, Y2... etc. (or a vector of other standardised variables that can appropriately have euclidean distances calculated between it and reference variables). NB if applied to a reference collection specimen be sure to remove it from the Ref.data dataset.}
 
-\item{Ref.Shape}{is a matrix of Reference specimen data where the rows are the individual reference specimens and the columns are the variables in the same order as the Target.Shape vector.}
+\item{Ref.data}{is a matrix of Reference specimen data where the rows are the individual reference specimens and the columns are the variables in the same order as the Target.data vector.}
 
 \item{Shape.Data}{logical indicating whether the data is geometric morphometric shape data that requires superimposition. Default set to TRUE}
 
@@ -26,11 +24,11 @@ IDbyDistance.RawData(Lat.Longs = data.frame(Lats = c(), Longs = c()),
 
 \item{DistMethod}{determines what kind of distance calculation should be used, either Euclidean "Euc" or Procrustes "Proc". If the user wishes to use another distance or dissimilarity please use the IDbyDistance.DistInput function.}
 
-\item{LongRange}{is a vector of two elements defining the maximum and minimum Longitude values that the provenancing method should explore. This will also define the mapping range in the final plotted output.}
+\item{LongRange}{is a vector of 2 elements defining the maximum and minimum Longitude values that the provenancing method should explore. This will also define the mapping range in the final plotted output.}
 
-\item{LatRange}{is a vector of two elements defining the maximum and minimum Latitude values that the provenancing method should explore. This will also define the mapping range in the final plotted output.}
+\item{LatRange}{is a vector of 2 elements defining the maximum and minimum Latitude values that the provenancing method should explore. This will also define the mapping range in the final plotted output.}
 
-\item{Range.Samp}{is an integer vector of one or two elements that defines the resolution of spatial sampling. If one element is provided then both the latitude and longitude ranges are equally and evenly sampled using this value. If two elements are provided they should be in the order of latitude longitude and each range will be evenly sampled with its respective value.}
+\item{Range.Samp}{is an integer vector of 1 or 2 elements that defines the resolution of spatial sampling. If one element is provided then both the latitude and longitude ranges are equally and evenly sampled using this value. If 2 elements are provided they should be in the order of latitude longitude and each range will be evenly sampled with its respective value.}
 
 \item{verbose}{logical whether or not a matrix of spatial correlation values is returned or not. Default is set to TRUE.}
 
@@ -42,7 +40,7 @@ IDbyDistance.RawData(Lat.Longs = data.frame(Lats = c(), Longs = c()),
 
 \item{Plot.Res}{logical whether or not to plot the provenancing map with heat values of most likely spatial origin.}
 
-\item{HeatHue}{numeric vector of two elements each between 0 and 1. The first should be the hue value on the HSV scale; the second value should be the level of transparency of the colour used.}
+\item{HeatHue}{numeric vector of 2 elements each between 0 and 1. The first should be the hue value on the HSV scale; the second value should be the level of transparency of the colour used.}
 
 \item{Tile.Size}{numeric to dictate the pixel size of the heat mapping colour values.}
 

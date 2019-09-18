@@ -4,25 +4,37 @@
 \alias{BoundaryFinder}
 \title{Returns geographic boundaries identified from trait distances}
 \usage{
-BoundaryFinder(Lat.Longs = data.frame(Lats = c(), Longs = c()),
-  Ref.Dist.mat = matrix(), LongRange = c(0, 0), LatRange = c(0, 0),
-  Range.Samp = 10, print.prog = TRUE, plot.Val.cor = as.numeric(X),
-  Expand.map = c(Lat, Long), datadump = NA, startpoint = 1)
+BoundaryFinder(Lat.Longs, Ref.Dist.mat = matrix(), LongRange, LatRange,
+  Range.Samp = 10, print.prog = TRUE, plot.Val.cor, Expand.map = c(0,
+  0), DataDump = TRUE, DataDumpPath = NA, startpoint = 1,
+  Ref.IDs = NULL, ignore.prompts = FALSE)
 }
 \arguments{
 \item{Lat.Longs}{a matrix of n rows by 2 columns where n is the number of reference specimens in your dataset and the columns are Latitude and Longitude values in that order. These latitude-longitude coordinates should be of the locations of the reference specimens.}
 
 \item{Ref.Dist.mat}{is a square matrix of pairwise distances among all reference specimens}
 
-\item{LongRange}{is a vector of two elements defining the maximum and minimum Longitude values that the provenancing method should explore. This will also define the mapping range in the final plotted output.}
+\item{LongRange}{is a vector of 2 elements defining the maximum and minimum Longitude values that the provenancing method should explore. This will also define the mapping range in the final plotted output.}
 
-\item{LatRange}{is a vector of two elements defining the maximum and minimum Latitude values that the provenancing method should explore. This will also define the mapping range in the final plotted output.}
+\item{LatRange}{is a vector of 2 elements defining the maximum and minimum Latitude values that the provenancing method should explore. This will also define the mapping range in the final plotted output.}
 
-\item{Range.Samp}{is an integer vector of one or two elements that defines the resolution of spatial sampling. If one element is provided then both the latitude and longitude ranges are equally and evenly sampled using this value. If two elements are provided they should be in the order of latitude longitude and each range will be evenly sampled with its respective value.}
+\item{Range.Samp}{is an integer vector of 1 or 2 elements that defines the resolution of spatial sampling. If one element is provided then both the latitude and longitude ranges are equally and evenly sampled using this value. If 2 elements are provided they should be in the order of latitude longitude and each range will be evenly sampled with its respective value.}
 
 \item{print.prog}{logical whether or not to print a progress bar. Default set to FALSE.}
 
 \item{plot.Val.cor}{numeric correlation value that is used to determine the most likely origin of the specimen. This value can be calculated by using the correct cross-validation method and identifying the correlation value that will correctly identify a desired percentage of specimens (e.g. 95\%).}
+
+\item{Expand.map}{is a vector of 2 elements for expanding the plotting region of the map. The first element expands the latitudinal area and the second element expands the longitudinal area.}
+
+\item{DataDump}{determines whether a datadump is used, which is recommended for large datasets that may take time to computeand when the user might want to interupt the process mid way. The default is set to TRUE. If it's set to FALSE then the results are output as an array where rows and columns reflect latitude longitude and the third dimension are individual specimens in the reference dataset.}
+
+\item{DataDumpPath}{is a directory path indicating where the data for constructing the boundaries can be dumped.}
+
+\item{startpoint}{is an iteger that denotes the specimen to start the process on. As the method needs to cycle through all known specimens in the database, this can take some time. If the process is stopped for whatever reason the process can be picked up again by adjusting the startpoint to the specimen number that it had previously finished on.}
+
+\item{Ref.IDs}{is a vector of the unique identifiers for each of the reference specimens in the reference dataset. These values will be used for naming the files in the datadump fololder and also for matching up with the returned summary results. Default is set to NULL and if this is not populated then reference data is worked through consecutively, naming the datadump files in consecutive order.}
+
+\item{ignore.prompts}{default is set to FALSE, but if set to TRUE queries such as those confirming the location of the datadump will be surpressed.}
 }
 \value{
 If verbose is TRUE then a dataframe of all values for every sampled grid reference is returned. If verbose is FALSE then only those grid references with the highest correlation values are returned.

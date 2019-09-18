@@ -30,7 +30,7 @@ ProcDistanceTable <- function(A){
     }
   }
 
-  ProcDrableRes <- as.matrix(as.dist(ProcDtable))
+  ProcDrableRes <- as.matrix(stats::as.dist(ProcDtable))
   return(ProcDrableRes)
 }
 

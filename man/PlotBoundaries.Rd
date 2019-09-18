@@ -4,15 +4,19 @@
 \alias{PlotBoundaries}
 \title{Plots map with boundaries from data dump folder}
 \usage{
-PlotBoundaries(plot.Val.cor, Path, MapLinesWd = 1, TileSize = 4,
-  plotLong, plotLat, MapExpansion = c(0, 0),
-  Lat.Longs = data.frame(Lats = c(), Longs = c()), Ref.PtCol = "blue",
+PlotBoundaries(plot.Val.cor, DataDump = TRUE, Path = NA,
+  RawCorArray = NA, MapLinesWd = 1, TileSize = 4, plotLong, plotLat,
+  MapExpansion = c(0, 0), Lat.Longs, Ref.PtCol = "blue",
   Ref.Pch.Size = 1, BoundaryHue = c(1, 1))
 }
 \arguments{
 \item{plot.Val.cor}{numeric correlation value that is used to determine the most likely origin of the specimen. This value can be calculated by using the correct cross-validation method and identifying the correlation value that will correctly identify a desired percentage of specimens (e.g. 95\%).}
 
-\item{Path}{the directory where boundary data files have been dumped from the BoundaryFinder function.}
+\item{DataDump}{if set to TRUE then the function uses files stored in the datadump folder as defined by \code{PATH}. If set to FALSE an array generated from the \code{BoundaryFinder} functions needs to be provided. Default is set to TRUE.}
+
+\item{Path}{the directory where boundary data files have been dumped from the BoundaryFinder function. Default is set to NA.}
+
+\item{RawCorArray}{an array of correlation values for each reference specimen where columns and rows correspond with longitude and latitude and the third dimension represents each individual reference specimen. Default is set to NA.}
 
 \item{MapLinesWd}{is a single numeric value to set the width of the map lines of landmass boundaries.}
 
@@ -29,16 +33,18 @@ PlotBoundaries(plot.Val.cor, Path, MapLinesWd = 1, TileSize = 4,
 \item{Ref.PtCol}{is the colour to be used for the reference specimen location points}
 
 \item{Ref.Pch.Size}{is a single numeric value to set the size of the points marking where reference specimens are located.}
+
+\item{BoundaryHue}{is a vector of 2 elements. The first element sets the colour hue value on a scale of 0 to 1 for a hsv function. The second value sets a transparancy level between 0 and 1, 0 being completely transparent.}
 }
 \value{
 matrix of logical TRUE/FALSE values identifying the boundary of the desired correlation value
 }
 \description{
 This function plots the results of takes the BoundaryFinder function that have been dumped in
-a specified folder. These results are constructed from the correlation values calculated across
-the spatial grid and identifies which gird points are at the boundary of of the provenancing
-region. These results then allows for the construction of compiled trait boundaries from spatial
-provenancing excercises.
+a specified folder or are stored in an array. These results are constructed from the correlation
+values calculated across the spatial grid and identifies which gird points are at the boundary of
+the provenancing region. These results then allows for the construction of compiled trait boundaries
+from spatial provenancing excercises.
 }
 \details{
 The map plotting of this function makes use of the functions of the \code{maps} package.

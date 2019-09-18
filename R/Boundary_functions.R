@@ -9,6 +9,12 @@
 #' latitude-longitude coordinates). This functions requires a distance input, which allows the user
 #' to input any desired dissimilarity or distance metrics as appropriate for the data.
 #' @param Ref.Dist.mat is a square matrix of pairwise distances among all reference specimens
+#' @param Expand.map is a vector of 2 elements for expanding the plotting region of the map. The first element expands the latitudinal area and the second element expands the longitudinal area.
+#' @param DataDump determines whether a datadump is used, which is recommended for large datasets that may take time to computeand when the user might want to interupt the process mid way. The default is set to TRUE. If it's set to FALSE then the results are output as an array where rows and columns reflect latitude longitude and the third dimension are individual specimens in the reference dataset.
+#' @param DataDumpPath is a directory path indicating where the data for constructing the boundaries can be dumped.
+#' @param startpoint is an iteger that denotes the specimen to start the process on. As the method needs to cycle through all known specimens in the database, this can take some time. If the process is stopped for whatever reason the process can be picked up again by adjusting the startpoint to the specimen number that it had previously finished on.
+#' @param Ref.IDs is a vector of the unique identifiers for each of the reference specimens in the reference dataset. These values will be used for naming the files in the datadump fololder and also for matching up with the returned summary results. Default is set to NULL and if this is not populated then reference data is worked through consecutively, naming the datadump files in consecutive order.
+#' @param ignore.prompts default is set to FALSE, but if set to TRUE queries such as those confirming the location of the datadump will be surpressed.
 #' @inheritParams IDbyDistance.DistInput
 #' @return If verbose is TRUE then a dataframe of all values for every sampled grid reference is returned. If verbose is FALSE then only those grid references with the highest correlation values are returned.
 #' @details The map plotting of this function makes use of the functions of the \code{maps} package.
@@ -38,22 +44,29 @@
 
 
 
-BoundaryFinder <- function(Lat.Longs=data.frame(Lats=c(), Longs=c()), Ref.Dist.mat=matrix(), LongRange=c(0,0), LatRange=c(0,0), Range.Samp=10, print.prog=TRUE, plot.Val.cor=as.numeric(X), Expand.map=c(Lat, Long), datadump=NA, startpoint=1){
+BoundaryFinder <- function(Lat.Longs, Ref.Dist.mat=matrix(), LongRange, LatRange, Range.Samp=10, print.prog=TRUE, plot.Val.cor, Expand.map=c(0,0), DataDump=TRUE, DataDumpPath=NA, startpoint=1, Ref.IDs=NULL, ignore.prompts=FALSE){
+  #Lat.Longs = cbind(RatLatLongData$Lat, RatLatLongData$Long); Ref.Dist.mat = RatDistMat;LongRange = Long.Range; LatRange = Lat.Range; Range.Samp = R.Samp; plot.Val.cor = rThres$`Provenancing.Correlation.95%.Confidence`; Expand.map = c(0,0); Ref.IDs = RatLatLongData$ID; DataDump = FALSE
+  #Lat.Longs = NEFtInfo[,2:3]; Ref.Dist.mat = NEDisMat; DataDump = FALSE; LongRange = NEFt.Long.Range; LatRange = NEFt.Lat.Range; Range.Samp = NEFtR.Samp; plot.Val.cor = NEFtrThres$`Provenancing.Correlation.95%.Confidence`;Ref.IDs = NEFtInfo$ID
 
-  #Lat.Longs=Heat.Info; Ref.Dist.mat=HeatDistMat; LongRange = Long.Range; LatRange = Lat.Range; Range.Samp = R.Samp; print.prog=TRUE; plot.Val.cor=.66; Expand.map = c(.05, .02); datadump = "DataDump_Temp_folder_test/"; startpoint=1
+  if (ignore.prompts==FALSE){
+    if (DataDump==TRUE){
+      if (is.na(DataDumpPath)){
+        readline(prompt = "\n Datadump directory not set. Data will be dumped in current working directory. \n Press [Esc] now to exit function and change DataDumpPath argument or press enter to continue.")
+      } else {
+        if ((length(list.files(DataDumpPath))+length(list.dirs(DataDumpPath)))>1){
+          QueryDD <- paste("\n Datadump directory",  DataDumpPath, " contains existing files. \n Press [Esc] now to exit function and change DataDumpPath argument or press enter to continue.")
+          readline(prompt = QueryDD)
+        } else {
+          QueryDD <- paste("\n DataDumpPath directory set to",  DataDumpPath, "\n Press [Esc] now to exit function and change DataDumpPath argument or press enter to continue.")
+          readline(prompt = QueryDD)
+        }
 
-  if (is.na(datadump)){
-    readline(prompt = "\n Datadump directory not set. Data will be dumped in current working directory. \n Press [Esc] now to exit function and change datadump argument or press any key to continue.")
-  } else {
-    if ((length(list.files(datadump))+length(list.dirs(datadump)))>1){
-      QueryDD <- paste("\n Datadump directory",  datadump, " contains existing files. \n Press [Esc] now to exit function and change datadump argument or press any key to continue.")
-      readline(prompt = QueryDD)
+      }
     } else {
-      QueryDD <- paste("\n Datadump directory set to",  datadump, "\n Press [Esc] now to exit function and change datadump argument or press any key to continue.")
-      readline(prompt = QueryDD)
+      readline(prompt = "\n WARNING DataDump is set to FALSE. Results will be sorted in an array and if the process is stopped data will be lost. \n Press [Esc] now to exit function and change DataDumpPath argument or press enter to continue.")
     }
-
   }
+
 
 
   #making Lat.Longs a dataframe
@@ -81,32 +94,60 @@ BoundaryFinder <- function(Lat.Longs=data.frame(Lats=c(), Longs=c()), Ref.Dist.m
 
   #plotting a map that will later be populated with polygons for each jackknifing iteration in the dd loop below
   if (sum(Expand.map>0)>0){
-    maps::map("world", xlim=c(min(Longways)-Expand.map[2], max(Longways)+Expand.map[2]), ylim=c(min(Latways)-Expand.map[1], max(Latways)+Expand.map[1]), interior=FALSE, col="black", bg=par(bg="white"))
-    points(x = as.character(Lat.Longs$Long), y = as.character(Lat.Longs$Lat), pch=23, bg='blue',  cex=1)
+    maps::map("world", xlim=c(min(Longways)-Expand.map[2], max(Longways)+Expand.map[2]), ylim=c(min(Latways)-Expand.map[1], max(Latways)+Expand.map[1]), interior=FALSE, col="black", bg=graphics::par(bg="white"))
+    graphics::points(x = as.character(Lat.Longs$Long), y = as.character(Lat.Longs$Lat), pch=23, bg='blue',  cex=1)
   } else {
-    maps::map("world", xlim=c(min(Longways), max(Longways)), ylim=c(min(Latways), max(Latways)), interior=FALSE, col="black", bg=par(bg="white"))
-    points(x = as.character(Lat.Longs$Long), y = as.character(Lat.Longs$Lat), pch=23, bg='blue',  cex=1)
+    maps::map("world", xlim=c(min(Longways), max(Longways)), ylim=c(min(Latways), max(Latways)), interior=FALSE, col="black", bg=graphics::par(bg="white"))
+    graphics::points(x = as.character(Lat.Longs$Long), y = as.character(Lat.Longs$Lat), pch=23, bg='blue',  cex=1)
   }
 
   SpecimenLoc <- cbind(chr2nu(Lat.Longs$Long), chr2nu(Lat.Longs$Lat))
-  DistPol <-  sp::Polygon(SpecimenLoc[chull(SpecimenLoc),])
+  DistPol <-  sp::Polygon(SpecimenLoc[grDevices::chull(SpecimenLoc),])
   DistPols <-  sp::Polygons(list(DistPol),1)
   DistSpatPol <-  sp::SpatialPolygons(list(DistPols))
+  sp::proj4string(DistSpatPol) <- "+proj=longlat +ellps=WGS84"
   DistSpatPol$area <- raster::area(DistSpatPol)
 
-  Prov.Array.Res <- array(NA, dim = c(length(Latways), length(Longways), length(startpoint:dim(Ref.Dist.mat)[1])))
 
-  IdentificationRange <- NULL
+  if (is.null(Ref.IDs)){
+    Ref.IDs <- 1:dim(Ref.Dist.mat)[1]
+  }
+
+  if (sum(rownames(Ref.Dist.mat)==c(1:length(rownames(Ref.Dist.mat))))==length(rownames(Ref.Dist.mat))){
+    ArrayDimNames <- list(Latways, Longways, rownames(Ref.Dist.mat))
+    Prov.Array.Res <- array(NA, dim = c(length(Latways), length(Longways), length(startpoint:dim(Ref.Dist.mat)[1])), dimnames = ArrayDimNames)
+
+    if (ignore.prompts==FALSE){
+      readline(prompt = "\n Distance matrix rownames appear match numeric order, \n so order number has been used as IDs for DataDump file names or array dimensions. \n \n Press enter to continue.")
+    }
+  } else if (length(unique(rownames(Ref.Dist.mat)))==length(rownames(Ref.Dist.mat))){
+    ArrayDimNames <- list(Latways, Longways, 1:length(rownames(Ref.Dist.mat)))
+    Prov.Array.Res <- array(NA, dim = c(length(Latways), length(Longways), length(startpoint:dim(Ref.Dist.mat)[1])), dimnames = ArrayDimNames)
+
+    if (ignore.prompts==FALSE){
+      readline(prompt = "\n Distance matrix rownames appear to be unique \n and have been used as IDs for DataDump file names or array dimensions. \n \n Press enter to continue.")
+    }
+  } else {
+    ArrayDimNames <- list(Latways, Longways, 1:length(rownames(Ref.Dist.mat)))
+    Prov.Array.Res <- array(NA, dim = c(length(Latways), length(Longways), length(startpoint:dim(Ref.Dist.mat)[1])), dimnames = ArrayDimNames)
+
+    if (ignore.prompts==FALSE){
+      readline(prompt = "\n Distance matrix rownames appear to have duplicates, \n so order number has been used as IDs for DataDump file names or array dimensions. \n \n Press enter to continue.")
+    }
+  }
+
+
+
+  IdentificationRange <- matrix(NA, nrow = dim(Ref.Dist.mat)[1], ncol = 3, dimnames = list(Ref.IDs, c('ID', '%RefDistribution', 'ProvencaningArea(m)')))
   for (dd in startpoint:dim(Ref.Dist.mat)[1]){
 
-    #dd <- 3
+    #dd <- 1
 
     if (print.prog==TRUE){
 
-
-      svMisc::progress(dd, progress.bar = TRUE)
+      svMisc::progress(value = dd, max.value = dim(Ref.Dist.mat)[1], progress.bar = TRUE)
       Sys.sleep(0.01)
-      if (i == dim(Ref.Dist.mat)[1]) cat("Done!\n")
+      if (dd == dim(Ref.Dist.mat)[1]) cat("Done!\n")
     }
 
     #sum(is.infinite(Ref.Dist.mat))
@@ -143,31 +184,29 @@ BoundaryFinder <- function(Lat.Longs=data.frame(Lats=c(), Longs=c()), Ref.Dist.m
     }
 
 
-    if (sum(rownames(HeatDistMat)==c(1:length(rownames(HeatDistMat))))==length(rownames(HeatDistMat))){
+    if (sum(rownames(Ref.Dist.mat)==c(1:length(rownames(Ref.Dist.mat))))==length(rownames(Ref.Dist.mat))){
       SpecimenID <- dd
-      if (dd==1){
-        print(" Distance matrix rownames appear match numeric order, \n so order number has been used as IDs for datadump file names")
-      }
-    } else if (length(unique(rownames(HeatDistMat)))==length(rownames(HeatDistMat))){
-      SpecimenID <- rownames(HeatDistMat)[dd]
-      if (dd==1){
-        print(" Distance matrix rownames appear to be unique \n and have been used as IDs for datadump file names")
-      }
+    } else if (length(unique(rownames(Ref.Dist.mat)))==length(rownames(Ref.Dist.mat))){
+      SpecimenID <- rownames(Ref.Dist.mat)[dd]
     } else {
       SpecimenID <- dd
-      if (dd==1){
-        print(" Distance matrix rownames appear to have duplicates, \n so order number has been used as IDs for datadump file names")
-      }
     }
 
 
-    if (dd==startpoint){
-      BoundaryDDTot <- paste(datadump,"Individuals/", sep="")
-      dir.create(BoundaryDDTot)
-      write.csv(cor.matrix.Res, paste(BoundaryDDTot, SpecimenID, ".csv", sep=""))
-    } else {
-      write.csv(cor.matrix.Res, paste(BoundaryDDTot, SpecimenID, ".csv", sep=""))
+
+
+
+    if (DataDump==TRUE){
+      if (dd==startpoint){
+        BoundaryDDTot <- paste(DataDumpPath,"Individuals/", sep="")
+        dir.create(BoundaryDDTot)
+        utils::write.csv(cor.matrix.Res, paste(BoundaryDDTot, SpecimenID, ".csv", sep=""))
+      } else {
+        utils::write.csv(cor.matrix.Res, paste(BoundaryDDTot, SpecimenID, ".csv", sep=""))
+      }
+
     }
+
 
     Prov.Array.Res[,,dd] <- cor.matrix.Res
 
@@ -193,11 +232,33 @@ BoundaryFinder <- function(Lat.Longs=data.frame(Lats=c(), Longs=c()), Ref.Dist.m
 
       ApproxOrigin <- CoordsHeat[Select.95.conf,]
 
-      EstDist <- 0
-      if (dim(ApproxOrigin)[1]<5){
+      Latvar <- stats::var(chr2nu(ApproxOrigin$Lats))
+      Longvar <- stats::var(chr2nu(ApproxOrigin$Longs))
 
-        points(x = as.character(ApproxOrigin$Long)[1], y = as.character(ApproxOrigin$Lat)[1], pch=21, bg=transpar(Colour ='gold', alpha = dim(Ref.Dist.mat)[1]/10),  cex=dim(ApproxOrigin)[1])
-        points(x = as.character(ApproxOrigin$Long), y = as.character(ApproxOrigin$Lat), pch=21, bg=transpar(Colour ='gold', alpha = dim(Ref.Dist.mat)[1]/10),  cex=dim(ApproxOrigin)[1])
+      EstDist <- NULL
+      if (is.na(Latvar)){
+        if (is.null(Ref.IDs)){
+          SpecimenMessage <- paste("For the", dd, "specimen", sep=" ")
+        } else {
+          SpecimenMessage <- paste("For the", Ref.IDs[dd], "specimen", sep=" ")
+        }
+
+        RthresMessage <- paste("A provenancing region was not identified at this r threshold. R threshold set to:", plot.Val.cor, sep = "   ")
+        MaxCorMessage <- paste("The maximum correlation value acheived was:", max(chr2nu(CoordsHeat$Cor)), sep = "   ")
+        WarningMessage <- "This may be because the resolution used is too low so the likely origin region has been overlooked or alternatively the specimen could not be successfully identified because the reference material does not suffieciently reflect the morphology of the unknown specimen. Please adjust the sampling resolution by changing the R.Samp argument or change the r threshold or consider the specimen unidentifiable to a given region."
+        warning(paste(SpecimenMessage, RthresMessage, MaxCorMessage, WarningMessage, sep = " "))
+
+      } else if (Latvar==0 || Longvar==0){
+        if (is.null(Ref.IDs)){
+          SpecimenMessage <- paste("For the", dd, "specimen", sep=" ")
+        } else {
+          SpecimenMessage <- paste("For the", Ref.IDs[dd], "specimen", sep=" ")
+        }
+        WarningMessage <- paste(SpecimenMessage, "The resolution used for identifying a region of identification is too low to plot a polygon of the likely region of origin. Therefore, the grid squares that were identified by the r threshold as a possible region of origin have been highlighted. Please set the R.Samp argument to a higher value if a polygon of the most likely region of origin is desired.")
+        warning(WarningMessage)
+
+        graphics::points(x = as.character(ApproxOrigin$Long)[1], y = as.character(ApproxOrigin$Lat)[1], pch=21, bg=transpar(Colour ='gold', alpha = dim(Ref.Dist.mat)[1]/10),  cex=dim(ApproxOrigin)[1])
+        graphics::points(x = as.character(ApproxOrigin$Long), y = as.character(ApproxOrigin$Lat), pch=21, bg=transpar(Colour ='gold', alpha = dim(Ref.Dist.mat)[1]/10),  cex=dim(ApproxOrigin)[1])
 
       } else {
         contour.95 <-  Construct_contour(ApproxOrigin[,1:2])
@@ -208,6 +269,7 @@ BoundaryFinder <- function(Lat.Longs=data.frame(Lats=c(), Longs=c()), Ref.Dist.m
         EstSpatPol <-  sp::SpatialPolygons(list(EstimatedPols))
         #plot(DistSpatPol)
         #plot(EstSpatPol, add=TRUE)
+        sp::proj4string(EstSpatPol) <- "+proj=longlat +ellps=WGS84"
 
 
         EstDist <- raster::intersect(EstSpatPol, DistSpatPol)
@@ -215,7 +277,7 @@ BoundaryFinder <- function(Lat.Longs=data.frame(Lats=c(), Longs=c()), Ref.Dist.m
       }
 
       if (is.null(EstDist)){
-        NarrowedRanges <- c(0, 0.00001) ###### check for better solution, fails when resolution not high enough to put identification area within ref distribution area
+        NarrowedRanges <- c(0, 0.00001) ###### check for better resolution, fails when resolution not high enough to put identification area within ref distribution area
       } else if (attr(class(EstDist), "package")!='sp'){
         NarrowedRanges <- c(0, 0.00001)
       } else {
@@ -227,12 +289,12 @@ BoundaryFinder <- function(Lat.Longs=data.frame(Lats=c(), Longs=c()), Ref.Dist.m
       NarrowedRanges <- c(1, DistSpatPol$area)
     }
 
-    IdentificationRange <- rbind(IdentificationRange, c(dd,NarrowedRanges))
+    IdentificationRange[dd,] <- c(as.character(Ref.IDs[dd]),NarrowedRanges)
 
-    if (is.na(datadump)==FALSE){
-      filename <- paste(datadump, "DataDump.csv", sep="")
+    if (DataDump==TRUE){
+      filename <- paste(DataDumpPath, "DataDump.csv", sep="")
 
-      write.csv(IdentificationRange, filename)
+      utils::write.csv(IdentificationRange, filename)
     }
   }
 
@@ -260,17 +322,26 @@ BoundaryFinder <- function(Lat.Longs=data.frame(Lats=c(), Longs=c()), Ref.Dist.m
   BoundScaled <- (max(chr2nu(BoundaryCoordsResTable[,3]))-chr2nu(BoundaryCoordsResTable[,3]))/(max(chr2nu(BoundaryCoordsResTable[,3]))-min(chr2nu(BoundaryCoordsResTable[,3])))
 
 
-  maps::map("world", xlim=c(min(Longways), max(Longways)), ylim=c(min(Latways), max(Latways)), interior=FALSE, col="red", bg=par(bg="white"))#, add=T, lwd=4)
+  maps::map("world", xlim=c(min(Longways), max(Longways)), ylim=c(min(Latways), max(Latways)), interior=FALSE, col="red", bg=graphics::par(bg="white"))#, add=T, lwd=4)
 
-  points(x = as.character(BoundaryCoordsResTable[,2]), y = as.character(BoundaryCoordsResTable[,1]), pch=15, col=grey(BoundScaled),  cex=2)
+  graphics::points(x = as.character(BoundaryCoordsResTable[,2]), y = as.character(BoundaryCoordsResTable[,1]), pch=15, col=grDevices::grey(BoundScaled),  cex=2)
 
-  points(x = as.character(Lat.Longs$Long), y = as.character(Lat.Longs$Lat), pch=23, bg='blue',  cex=1)
-  maps::map("world", xlim=c(min(Longways), max(Longways)), ylim=c(min(Latways), max(Latways)), interior=FALSE, col="red", bg=par(bg="white"), add=T, lwd=4)
+  graphics::points(x = as.character(Lat.Longs$Long), y = as.character(Lat.Longs$Lat), pch=23, bg='blue',  cex=1)
+  maps::map("world", xlim=c(min(Longways), max(Longways)), ylim=c(min(Latways), max(Latways)), interior=FALSE, col="red", bg=graphics::par(bg="white"), add=T, lwd=4)
   maps::map.axes()
 
-  write.csv(rownames(Prov.matrix.Res), paste(datadump, "LatKey.csv", sep = ""))
-  write.csv(colnames(Prov.matrix.Res), paste(datadump, "LongsKey.csv", sep = ""))
-  return(IdentificationRange)
+
+  if (DataDump==TRUE){
+    utils::write.csv(rownames(Prov.matrix.Res), paste(DataDumpPath, "LatKey.csv", sep = ""))
+    utils::write.csv(colnames(Prov.matrix.Res), paste(DataDumpPath, "LongsKey.csv", sep = ""))
+
+    return(IdentificationRange)
+  } else {
+    return(list(RawCorData=Prov.Array.Res, ProvenanceRange=IdentificationRange))
+
+  }
+
+
 }
 
 
@@ -336,11 +407,13 @@ BoundaryCalculation <- function(Map.matrix, plot.Val.cor){
 #' Plots map with boundaries from data dump folder
 #'
 #' This function plots the results of takes the BoundaryFinder function that have been dumped in
-#' a specified folder. These results are constructed from the correlation values calculated across
-#' the spatial grid and identifies which gird points are at the boundary of of the provenancing
-#' region. These results then allows for the construction of compiled trait boundaries from spatial
-#' provenancing excercises.
-#' @param Path the directory where boundary data files have been dumped from the BoundaryFinder function.
+#' a specified folder or are stored in an array. These results are constructed from the correlation
+#' values calculated across the spatial grid and identifies which gird points are at the boundary of
+#' the provenancing region. These results then allows for the construction of compiled trait boundaries
+#' from spatial provenancing excercises.
+#' @param Path the directory where boundary data files have been dumped from the BoundaryFinder function. Default is set to NA.
+#' @param DataDump if set to TRUE then the function uses files stored in the datadump folder as defined by \code{PATH}. If set to FALSE an array generated from the \code{BoundaryFinder} functions needs to be provided. Default is set to TRUE.
+#' @param RawCorArray an array of correlation values for each reference specimen where columns and rows correspond with longitude and latitude and the third dimension represents each individual reference specimen. Default is set to NA.
 #' @param MapLinesWd is a single numeric value to set the width of the map lines of landmass boundaries.
 #' @param TileSize is a single numeric value to set the size of the pixels/tiles that will form the boundary.
 #' @param Ref.Pch.Size is a single numeric value to set the size of the points marking where reference specimens are located.
@@ -348,6 +421,7 @@ BoundaryCalculation <- function(Map.matrix, plot.Val.cor){
 #' @param plotLat is a vector of numeric values for all the Latitude values sampled in the boundary finding exercise. Unlike the LatRange argument of other functions where just the maximum and minimum values are specified, this vectors should contain all Latitude value expected. As a result, this numeric vector should match the row names of the data dump files.
 #' @param MapExpansion is a vector of two numeric values that define an increase in plotting area of the map (but not the area for which the boundary calculations have been carried out). The first value is added to the  This therefore allows the
 #' @param Ref.PtCol is the colour to be used for the reference specimen location points
+#' @param BoundaryHue is a vector of 2 elements. The first element sets the colour hue value on a scale of 0 to 1 for a hsv function. The second value sets a transparancy level between 0 and 1, 0 being completely transparent.
 #' @inheritParams BoundaryFinder
 #' @inheritParams IDbyDistance.DistInput
 #' @return matrix of logical TRUE/FALSE values identifying the boundary of the desired correlation value
@@ -363,26 +437,45 @@ BoundaryCalculation <- function(Map.matrix, plot.Val.cor){
 #' @keywords Spatial provenancing
 #' @keywords Boundary finder
 #' @keywords Boundary plotting
+#' @export
 
 
-PlotBoundaries <- function(plot.Val.cor, Path, MapLinesWd=1, TileSize=4, plotLong, plotLat, MapExpansion=c(0,0), Lat.Longs=data.frame(Lats=c(), Longs=c()), Ref.PtCol='blue',  Ref.Pch.Size=1, BoundaryHue = c(1,1)){
+PlotBoundaries <- function(plot.Val.cor, DataDump=TRUE, Path=NA, RawCorArray=NA , MapLinesWd=1, TileSize=4, plotLong, plotLat, MapExpansion=c(0,0), Lat.Longs, Ref.PtCol='blue',  Ref.Pch.Size=1, BoundaryHue = c(1,1)){
+  #plot.Val.cor = rThres$`Provenancing.Correlation.95%.Confidence`; RawCorArray = Boundaryfinding$RawCorData; plotLong = colnames(Boundaryfinding$RawCorData); plotLat = rownames(Boundaryfinding$RawCorData); Lat.Longs= cbind(RatLatLongData$Lat, RatLatLongData$Long)
+  #DataDump=FALSE
 
-  #CorVal=plot.Val.cor; plotLong= Long.Range; plotLat=Lat.Range; Path="NewBoundaryTrial_fresh/Individuals/"; MapLinesWd = 1; TileSize = 2; MapExpansion = c(.2,.1); Spec.Lat.Longs = Heat.Info
+  colnames(Lat.Longs) <- c('Lats', 'Longs')
+  Lat.Longs <- as.data.frame(Lat.Longs)
+  plotLong <- as.numeric(plotLong)
+  plotLat <- as.numeric(plotLat)
 
-  BoundaryCoords <- list.files(Path)
+  if (DataDump==TRUE){
+    BoundaryCoords <- list.files(Path)
 
-  #dimtest <- read.csv(paste(datadump, "Individuals/", BoundaryCoords[1], sep=""))[,-1]
-  dimtest <- read.csv(paste(Path, BoundaryCoords[1], sep=""))[,-1]
+    #dimtest <- read.csv(paste(DataDumpPath, "Individuals/", BoundaryCoords[1], sep=""))[,-1]
+    dimtest <- utils::read.csv(paste(Path, BoundaryCoords[1], sep=""))[,-1]
 
-  Prov.Array.Res <- array(NA, dim = c(dim(dimtest)[1], dim(dimtest)[2], length(BoundaryCoords)))
+    Prov.Array.Res <- array(NA, dim = c(dim(dimtest)[1], dim(dimtest)[2], length(BoundaryCoords)))
 
-  for (bb in 1:length(BoundaryCoords)){
-    #bb <- 10
-    ContentBoundary <- read.csv(paste(Path,BoundaryCoords[bb], sep=""))[,-1]
+    for (bb in 1:length(BoundaryCoords)){
+      #bb <- 10
+      ContentBoundary <- utils::read.csv(paste(Path,BoundaryCoords[bb], sep=""))[,-1]
 
-    BoundaryMat <- as.matrix(ContentBoundary)
-    Prov.Array.Res[,,bb] <- BoundaryCalculation(Map.matrix = BoundaryMat, plot.Val.cor = plot.Val.cor)
+      BoundaryMat <- as.matrix(ContentBoundary)
+      Prov.Array.Res[,,bb] <- BoundaryCalculation(Map.matrix = BoundaryMat, plot.Val.cor = plot.Val.cor)
+    }
+  } else {
+    Prov.Array.Res <- RawCorArray
+
+    for (bb in 1:dim(Prov.Array.Res)[3]){
+
+      BoundaryMat <- as.matrix(RawCorArray[,,bb])
+      Prov.Array.Res[,,bb] <- BoundaryCalculation(Map.matrix = BoundaryMat, plot.Val.cor = plot.Val.cor)
+    }
   }
+
+
+
 
   rownames(Prov.Array.Res) <- plotLat
   colnames(Prov.Array.Res) <- plotLong
@@ -400,8 +493,8 @@ PlotBoundaries <- function(plot.Val.cor, Path, MapLinesWd=1, TileSize=4, plotLon
 
 
 
-  Longways <- c(min(plotLong)-MapExpansion[2], max(plotLong)+MapExpansion[2])
-  Latways <- c(min(plotLat)-MapExpansion[1], max(plotLat)+MapExpansion[1])
+  Longways <- c(min(as.numeric(plotLong))-MapExpansion[2], max(as.numeric(plotLong))+MapExpansion[2])
+  Latways <- c(min(as.numeric(plotLat))-MapExpansion[1], max(as.numeric(plotLat))+MapExpansion[1])
 
 
 
@@ -410,16 +503,16 @@ PlotBoundaries <- function(plot.Val.cor, Path, MapLinesWd=1, TileSize=4, plotLon
   BoundScaled <- (max(chr2nu(BoundaryCoordsResTable[,3]))-chr2nu(BoundaryCoordsResTable[,3]))/(max(chr2nu(BoundaryCoordsResTable[,3]))-min(chr2nu(BoundaryCoordsResTable[,3])))
 
 
-  maps::map("world", xlim=c(min(Longways), max(Longways)), ylim=c(min(Latways), max(Latways)), interior=FALSE, col="red", bg=par(bg="white"))#, add=T, lwd=4)
+  maps::map("world", xlim=c(min(Longways), max(Longways)), ylim=c(min(Latways), max(Latways)), interior=FALSE, col="red", bg=graphics::par(bg="white"))#, add=T, lwd=4)
 
-  BoundaryScale <- hsv(h = BoundaryHue[1], v = 1, s = 1-BoundScaled, alpha = BoundaryHue[2])
-
-
-  points(x = as.character(BoundaryCoordsResTable[,2]), y = as.character(BoundaryCoordsResTable[,1]), pch=15, col=BoundaryScale,  cex=TileSize)
+  BoundaryScale <- grDevices::hsv(h = BoundaryHue[1], v = 1, s = 1-BoundScaled, alpha = BoundaryHue[2])
 
 
-  points(x = as.character(plot.Val.Lat.Longs$Longs), y = as.character(plot.Val.Lat.Longs$Lats), pch=23, bg=Ref.PtCol,  cex=Ref.Pch.Size)
-  maps::map("world", xlim=c(min(plotLong), max(plotLong)), ylim=c(min(plotLat), max(plotLat)), interior=FALSE, col="grey45", bg=par(bg="white"), add=T, lwd=MapLinesWd)
+  graphics::points(x = as.character(BoundaryCoordsResTable[,2]), y = as.character(BoundaryCoordsResTable[,1]), pch=15, col=BoundaryScale,  cex=TileSize)
+
+
+  graphics::points(x = as.character(Lat.Longs$Longs), y = as.character(Lat.Longs$Lats), pch=23, bg=Ref.PtCol,  cex=Ref.Pch.Size)
+  maps::map("world", xlim=c(min(plotLong), max(plotLong)), ylim=c(min(plotLat), max(plotLat)), interior=FALSE, col="grey45", bg=graphics::par(bg="white"), add=T, lwd=MapLinesWd)
 
   maps::map.axes()
 

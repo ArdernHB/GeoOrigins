@@ -4,15 +4,14 @@
 \alias{IDbyDistance.RawData.CCV}
 \title{Spatial Provenancing Correct Cross-Validation calculation from raw data}
 \usage{
-IDbyDistance.RawData.CCV(Lat.Longs = data.frame(Lats = c(), Longs = c()),
-  Ref.Shape = matrix(rbind(c(X1, Y1, X2, Y2), c(X1, Y1, X2, Y2))),
-  Shape.Data = TRUE, Shape.dim = 2, DistMethod = c("Euc", "Proc"),
-  verbose = TRUE, print.prog = TRUE, Prov.Confidence = 0.95)
+IDbyDistance.RawData.CCV(Lat.Longs, Ref.data, Shape.Data = TRUE,
+  Shape.dim = 2, DistMethod = c("Euc", "Proc"), verbose = TRUE,
+  print.prog = TRUE, Prov.Confidence = 0.95)
 }
 \arguments{
 \item{Lat.Longs}{a matrix of n rows by 2 columns where n is the number of reference specimens in your dataset and the columns are Latitude and Longitude values in that order. These latitude-longitude coordinates should be of the locations of the reference specimens.}
 
-\item{Ref.Shape}{is a matrix of Reference specimen data where the rows are the individual reference specimens and the columns are the variables in the same order as the Target.Shape vector.}
+\item{Ref.data}{is a matrix of Reference specimen data where the rows are the individual reference specimens and the columns are the variables in the same order as the Target.data vector.}
 
 \item{Shape.Data}{logical indicating whether the data is geometric morphometric shape data that requires superimposition. Default set to TRUE}
 

@@ -1,6 +1,6 @@
 
 
-#' Returns the geographic provenance of a shape specimen
+#' Spatially provenance a specimen from shape data
 #'
 #' This function takes the raw variables of an unknown specimen and reference specimens
 #' and uses euclidean distances to calculate a likely spatial provenance. Note that this
@@ -14,20 +14,20 @@
 #' from the reference dataset at a time is required then it is advised that this be applied using
 #' this function.
 #' @param Lat.Longs a matrix of n rows by 2 columns where n is the number of reference specimens in your dataset and the columns are Latitude and Longitude values in that order. These latitude-longitude coordinates should be of the locations of the reference specimens.
-#' @param Target.Shape is a vector of superimposed geometric morphometric coordinated in the format X1, Y1, X2, Y2... etc. (or a vector of other standardised variables that can appropriately have euclidean distances calculated between it and reference variables). NB if applied to a reference collection specimen be sure to remove it from the Ref.Shape dataset.
-#' @param Ref.Shape is a matrix of Reference specimen data where the rows are the individual reference specimens and the columns are the variables in the same order as the Target.Shape vector.
+#' @param Target.data is a vector of unknown specimen data. If it is geometric morphometric data is should be a vector of superimposed coordinated in the format X1, Y1, X2, Y2... etc. (or a vector of other standardised variables that can appropriately have euclidean distances calculated between it and reference variables). NB if applied to a reference collection specimen be sure to remove it from the Ref.data dataset.
+#' @param Ref.data is a matrix of Reference specimen data where the rows are the individual reference specimens and the columns are the variables in the same order as the Target.data vector.
 #' @param Shape.Data logical indicating whether the data is geometric morphometric shape data that requires superimposition. Default set to TRUE
 #' @param Shape.dim integer either 2 or 3 to indicate the dimensions of landmark coordinates if the data is geometric morphometric data.
 #' @param DistMethod determines what kind of distance calculation should be used, either Euclidean "Euc" or Procrustes "Proc". If the user wishes to use another distance or dissimilarity please use the IDbyDistance.DistInput function.
-#' @param LongRange is a vector of two elements defining the maximum and minimum Longitude values that the provenancing method should explore. This will also define the mapping range in the final plotted output.
-#' @param LatRange is a vector of two elements defining the maximum and minimum Latitude values that the provenancing method should explore. This will also define the mapping range in the final plotted output.
-#' @param Range.Samp is an integer vector of one or two elements that defines the resolution of spatial sampling. If one element is provided then both the latitude and longitude ranges are equally and evenly sampled using this value. If two elements are provided they should be in the order of latitude longitude and each range will be evenly sampled with its respective value.
+#' @param LongRange is a vector of 2 elements defining the maximum and minimum Longitude values that the provenancing method should explore. This will also define the mapping range in the final plotted output.
+#' @param LatRange is a vector of 2 elements defining the maximum and minimum Latitude values that the provenancing method should explore. This will also define the mapping range in the final plotted output.
+#' @param Range.Samp is an integer vector of 1 or 2 elements that defines the resolution of spatial sampling. If one element is provided then both the latitude and longitude ranges are equally and evenly sampled using this value. If 2 elements are provided they should be in the order of latitude longitude and each range will be evenly sampled with its respective value.
 #' @param verbose logical whether or not a matrix of spatial correlation values is returned or not. Default is set to TRUE.
 #' @param print.prog logical whether or not to print a progress bar. Default set to FALSE.
 #' @param Validate logical whether or not to run a correct cross-validation analysis to find the lowest required correlation value for correct identification.
 #' @param Valid.LatLongs if the process is carried out on a specimen of known location `(e.g. Validate=TRUE)`, then the latitude longitude coordinates for that location should be provided here in that order.
 #' @param Plot.Res logical whether or not to plot the provenancing map with heat values of most likely spatial origin.
-#' @param HeatHue numeric vector of two elements each between 0 and 1. The first should be the hue value on the HSV scale; the second value should be the level of transparency of the colour used.
+#' @param HeatHue numeric vector of 2 elements each between 0 and 1. The first should be the hue value on the HSV scale; the second value should be the level of transparency of the colour used.
 #' @param Tile.Size numeric to dictate the pixel size of the heat mapping colour values.
 #' @param plot.Prov logical if the map should be printed with a polygon demarking a contour at a user defined correlation value.
 #' @param plot.Val.cor numeric correlation value that is used to determine the most likely origin of the specimen. This value can be calculated by using the correct cross-validation method and identifying the correlation value that will correctly identify a desired percentage of specimens (e.g. 95\%).
@@ -53,7 +53,7 @@
 #' @keywords Spatial identification
 #' @export
 
-IDbyDistance.RawData <- function(Lat.Longs=data.frame(Lats=c(), Longs=c()), Target.Shape=c(X1,Y1,X2,Y2), Ref.Shape=matrix(rbind(c(X1,Y1,X2,Y2), c(X1,Y1,X2,Y2))), Shape.Data=TRUE, Shape.dim=2, DistMethod=c("Euc", "Proc"), LongRange=c(0,0), LatRange=c(0,0), Range.Samp=10, verbose=TRUE, print.prog=FALSE, Validate= FALSE, Valid.LatLongs=c(Lat, Long), Plot.Res=TRUE, HeatHue= c(.1, 1), Tile.Size=2, plot.Prov=FALSE, plot.Val.cor=as.numeric(X)){
+IDbyDistance.RawData <- function(Lat.Longs, Target.data, Ref.data, Shape.Data=TRUE, Shape.dim=2, DistMethod=c("Euc", "Proc"), LongRange=c(0,0), LatRange=c(0,0), Range.Samp=10, verbose=TRUE, print.prog=FALSE, Validate= FALSE, Valid.LatLongs, Plot.Res=TRUE, HeatHue= c(.15, 1), Tile.Size=2, plot.Prov=FALSE, plot.Val.cor){
 
   #making Lat.Longs a dataframe
   Lat.Longs <- as.data.frame(Lat.Longs)
@@ -64,11 +64,11 @@ IDbyDistance.RawData <- function(Lat.Longs=data.frame(Lats=c(), Longs=c()), Targ
   #organising data for ease of analysis
   #combining ref and target specimens with target first
   if (Shape.Data==TRUE){
-    total.shape.raw <- rbind(Target.Shape, Ref.Shape)
+    total.shape.raw <- rbind(Target.data, Ref.data)
     gpaRes <- shapes::procGPA(Mat2Array(total.shape.raw, LMdim = Shape.dim))
-    total.shape <- array2mat(gpaRes$rotated)
+    total.shape <- Array2Mat(gpaRes$rotated)
   } else {
-    total.shape <- rbind(Target.Shape, Ref.Shape)
+    total.shape <- rbind(Target.data, Ref.data)
   }
 
 
@@ -80,8 +80,7 @@ IDbyDistance.RawData <- function(Lat.Longs=data.frame(Lats=c(), Longs=c()), Targ
   } else if (DistMethod=="Proc" && Shape.Data==TRUE){
     Shape.Dist <- apply(X = Mat2Array(total.shape[-1,], LMdim=Shape.dim), MARGIN = 3, FUN = shapes::procdist, y=matrix(total.shape[1,], nrow = length(total.shape[1,])/Shape.dim, ncol = Shape.dim, byrow = TRUE))
   } else if (DistMethod=="Proc" && Shape.Data==FALSE){
-    print("Error: Procrustes distance selected, but Shape.Data argument is set to FALSE")
-    break()
+    stop("Error: Procrustes distance selected, but Shape.Data argument is set to FALSE")
   }
 
 
@@ -101,8 +100,7 @@ IDbyDistance.RawData <- function(Lat.Longs=data.frame(Lats=c(), Longs=c()), Targ
   #but see IDbyDistance.RawData.ccv function for looping to be done automatically
   if (Validate==TRUE){
 
-    Valid.LatLongs <- as.data.frame(Valid.LatLongs)
-    colnames(Valid.LatLongs) <- c("Lats", "Longs")
+    names(Valid.LatLongs) <- c("Lats", "Longs")
 
     #This generates all the distances from the point on the map to all the specimen locations
     Geographic.Dists <- Geo.Dist2Point(RefLatLongs = Lat.Longs, TargetLatLong = c(Valid.LatLongs$Lats, Valid.LatLongs$Longs))
@@ -116,7 +114,7 @@ IDbyDistance.RawData <- function(Lat.Longs=data.frame(Lats=c(), Longs=c()), Targ
 
 
     #combining the individual results and organising them
-    results <- c(Valid.LatLongs$Lats, Valid.LatLongs$Longs, CorRes$estimate)
+    results <- c(Valid.LatLongs, CorRes$estimate)
 
     #adding the results of this round to the previous results
     CoordsHeat <- rbind(CoordsHeat, results)
@@ -189,38 +187,56 @@ IDbyDistance.RawData <- function(Lat.Longs=data.frame(Lats=c(), Longs=c()), Targ
   #or we don't and we're not yet interested in it
   if (Validate==FALSE){
     if (Plot.Res==TRUE){
-      maps::map("world", xlim=c(min(Longways), max(Longways)), ylim=c(min(Latways), max(Latways)), interior=FALSE, col="black", bg=par(bg="white"))
+      maps::map("world", xlim=c(min(Longways), max(Longways)), ylim=c(min(Latways), max(Latways)), interior=FALSE, col="black", bg=graphics::par(bg="white"))
 
 
-      #creating colour scale from max and min slope based on which variable we're using
-      CoordsHeatNum <- chr2nu(CoordsHeat$Cor.Slope)
+      #creating colour scale from max and min correlation based on which variable we're using
+      CoordsHeatNum <- chr2nu(CoordsHeat$Cor)
       OriginLoc <- CoordsHeat[which(CoordsHeatNum==max(CoordsHeatNum)),]
 
 
       CoordsHeatscaled <- (CoordsHeatNum-min(CoordsHeatNum))/(max(CoordsHeatNum)-min(CoordsHeatNum))
 
-      CoordsHeats <- hsv(h = HeatHue[1], v = 1, s = CoordsHeatscaled, alpha = HeatHue[2])
+      CoordsHeats <- grDevices::hsv(h = HeatHue[1], v = 1, s = CoordsHeatscaled, alpha = HeatHue[2])
 
       #plotting the correlations
-      points(x = as.character(CoordsHeat$Long), y = as.character(CoordsHeat$Lat), pch=15, col=CoordsHeats,  cex=Tile.Size)
+      graphics::points(x = as.character(CoordsHeat$Long), y = as.character(CoordsHeat$Lat), pch=15, col=CoordsHeats,  cex=Tile.Size)
 
       #here if we want to plot a polygon of the region that
       #approximates the region the specimens came from (with whatever level of confidence we have selected)
       if (plot.Prov==TRUE){
-        Select.95.conf <- which(chr2nu(CoordsHeat$Cor.Slope)>plot.Val.cor)
+        Select.95.conf <- which(chr2nu(CoordsHeat$Cor)>plot.Val.cor)
 
         ApproxOrigin <- CoordsHeat[Select.95.conf,]
 
-        contour.95 <-  Construct_contour(ApproxOrigin)
-        polycol <- hsv(h = HeatHue[1], s = 1, v = .8, alpha = HeatHue[2])
+        Latvar <- stats::var(chr2nu(ApproxOrigin$Lats))
+        Longvar <- stats::var(chr2nu(ApproxOrigin$Longs))
 
-        polygon(contour.95$x, contour.95$y, col=NA, border=polycol, lwd=2)
+        if (is.na(Latvar)){
+          RthresMessage <- paste("A provenancing region was not identified at this r threshold. R threshold set to:", plot.Val.cor, sep = "   ")
+          MaxCorMessage <- paste("The maximum correlation value acheived was:", max(chr2nu(CoordsHeat$Cor)), sep = "   ")
+          WarningMessage <- "This may be because the resolution used is too low so the likely origin region has been overlooked or alternatively the specimen could not be successfully identified because the reference material does not suffieciently reflect the morphology of the unknown specimen. Please adjust the sampling resolution by changing the R.Samp argument or change the r threshold or consider the specimen unidentifiable to a given region."
+          warning(paste(RthresMessage, MaxCorMessage, WarningMessage, sep = " "))
+
+        } else if (Latvar==0 || Longvar==0){
+          warning("The resolution used for identifying a region of identification is too low to plot a polygon of the likely region of origin. Therefore, the grid squares that were identified by the r threshold as a possible region of origin have been highlighted. Please set the R.Samp argument to a higher value if a polygon of the most likely region of origin is desired.")
+          polycol <- grDevices::hsv(h = HeatHue[1], s = 1, v = .8, alpha = HeatHue[2])
+          graphics::points(x = as.character(ApproxOrigin$Longs), y = as.character(ApproxOrigin$Lats), pch=22, bg=polycol,  cex=Tile.Size+.1)
+        } else {
+
+          contour.95 <-  Construct_contour(ApproxOrigin)
+          polycol <- grDevices::hsv(h = HeatHue[1], s = 1, v = .8, alpha = HeatHue[2])
+
+          graphics::polygon(contour.95$x, contour.95$y, col=NA, border=polycol, lwd=2)
+
+        }
+
 
       }
 
-      maps::map("world", xlim=c(min(Longways), max(Longways)), ylim=c(min(Latways), max(Latways)), interior=FALSE, col="black", bg=par(bg="white"), add=T)
+      maps::map("world", xlim=c(min(Longways), max(Longways)), ylim=c(min(Latways), max(Latways)), interior=FALSE, col="black", bg=graphics::par(bg="white"), add=T)
 
-      points(x = as.character(Lat.Longs$Long), y = as.character(Lat.Longs$Lat), pch=23, bg='orange',  cex=1)
+      graphics::points(x = as.character(Lat.Longs$Long), y = as.character(Lat.Longs$Lat), pch=23, bg='orange',  cex=1)
       maps::map.axes()
     }
   }
@@ -229,7 +245,7 @@ IDbyDistance.RawData <- function(Lat.Longs=data.frame(Lats=c(), Longs=c()), Targ
   if (verbose==TRUE|Validate==TRUE){
     return(CoordsHeat)
   } else {
-    OriginLocCor <- CoordsHeat[which(CoordsHeat$Cor.Slope==max(chr2nu(CoordsHeat$Cor.Slope), na.rm = TRUE)),]
+    OriginLocCor <- CoordsHeat[which(CoordsHeat$Cor==max(chr2nu(CoordsHeat$Cor), na.rm = TRUE)),]
 
     return(list(Cor=OriginLocCor))
   }
@@ -267,8 +283,10 @@ IDbyDistance.RawData <- function(Lat.Longs=data.frame(Lats=c(), Longs=c()), Targ
 #' http://www.sciviews.org/SciViews-R.
 #'
 #' @author Ardern Hulme-Beaman
+#' @export
 
-IDbyDistance.RawData.CCV <- function(Lat.Longs=data.frame(Lats=c(), Longs=c()), Ref.Shape=matrix(rbind(c(X1,Y1,X2,Y2), c(X1,Y1,X2,Y2))), Shape.Data=TRUE, Shape.dim=2, DistMethod=c("Euc", "Proc"), verbose=TRUE, print.prog=TRUE, Prov.Confidence=0.95){
+
+IDbyDistance.RawData.CCV <- function(Lat.Longs, Ref.data, Shape.Data=TRUE, Shape.dim=2, DistMethod=c("Euc", "Proc"), verbose=TRUE, print.prog=TRUE, Prov.Confidence=0.95){
 
   #making Lat.Longs a dataframe
   Lat.Longs <- as.data.frame(Lat.Longs)
@@ -279,10 +297,10 @@ IDbyDistance.RawData.CCV <- function(Lat.Longs=data.frame(Lats=c(), Longs=c()), 
   #organising data for ease of analysis
   #combining ref and target specimens with target first
   if (Shape.Data==TRUE){
-    gpaRes <- shapes::procGPA(Mat2Array(Ref.Shape, LMdim = Shape.dim))
-    total.shape <- array2mat(gpaRes$rotated)
+    gpaRes <- shapes::procGPA(Mat2Array(Ref.data, LMdim = Shape.dim))
+    total.shape <- Array2Mat(gpaRes$rotated)
   } else {
-    total.shape <- Ref.Shape
+    total.shape <- Ref.data
   }
 
   #calculating euclidean distances between specimens
@@ -292,14 +310,13 @@ IDbyDistance.RawData.CCV <- function(Lat.Longs=data.frame(Lats=c(), Longs=c()), 
   } else if (DistMethod=="Proc" && Shape.Data==TRUE){
     Shape.Dist.Mat <- ProcDistanceTable(Mat2Array(total.shape, LMdim=Shape.dim))
   } else if (DistMethod=="Proc" && Shape.Data==FALSE){
-    print("Error: Procrustes distance selected, but Shape.Data argument is set to FALSE")
-    break()
+    stop("Error: Procrustes distance selected, but Shape.Data argument is set to FALSE")
   }
 
 
 
   #creating an empty object to be populated by results
-  CoordsHeat <- NULL
+  CoordsHeat <- matrix(NA, nrow = dim(Ref.data)[1], ncol = 3)
 
   for (i in 1:dim(total.shape)[1]){
     #i <- 1
@@ -320,10 +337,10 @@ IDbyDistance.RawData.CCV <- function(Lat.Longs=data.frame(Lats=c(), Longs=c()), 
 
 
     #combining the individual results and organising them
-    results <- c(Valid.LatLongs$Lats, Valid.LatLongs$Longs, CorRes$estimate)
+    results <- c(Lat.Longs$Lats[i], Lat.Longs$Longs[i], CorRes$estimate)
 
     #adding the results of this round to the previous results
-    CoordsHeat <- rbind(CoordsHeat, results)
+    CoordsHeat[i,] <- results
 
     if (print.prog==TRUE){
       svMisc::progress(value = i, max.value = dim(total.shape)[1], progress.bar = FALSE)
@@ -338,7 +355,7 @@ IDbyDistance.RawData.CCV <- function(Lat.Longs=data.frame(Lats=c(), Longs=c()), 
   #naming the variables
   names(CoordsHeat) <- c("Lats", "Longs", "Cor")
 
-  ProvCor <- quantile(CoordsHeat$Cor, 1-Prov.Confidence)
+  ProvCor <- stats::quantile(CoordsHeat$Cor, 1-Prov.Confidence)
 
   if (verbose==TRUE){
 

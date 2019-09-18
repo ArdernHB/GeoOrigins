@@ -9,12 +9,11 @@
 #' @keywords colour
 #' @keywords transparency
 #' @author Ardern Hulme-Beaman
-#' @examples
-#' transpar(Colour = 'red', alpha = 50)
+
 
 transpar<-function(Colour, alpha=100){
-  newColour<-col2rgb(Colour)
-  apply(newColour, 2, function(curcoldata){rgb(red=curcoldata[1], green=curcoldata[2], blue=curcoldata[3],alpha=alpha, maxColorValue=255)})
+  newColour<-grDevices::col2rgb(Colour)
+  apply(newColour, 2, function(curcoldata){grDevices::rgb(red=curcoldata[1], green=curcoldata[2], blue=curcoldata[3],alpha=alpha, maxColorValue=255)})
 }
 
 
@@ -30,7 +29,7 @@ transpar<-function(Colour, alpha=100){
 
 Construct_contour <- function(LatLongs) {
   x <-  cbind(chr2nu(LatLongs$Longs), chr2nu(LatLongs$Lats))
-  KSres <- ks::kde(x=x, H=Hpi(x=x), compute.cont=TRUE)
+  KSres <- ks::kde(x=x, H=ks::Hpi(x=x), compute.cont=TRUE)
   contour.95 <- with(KSres, grDevices::contourLines(x=eval.points[[1]],y=eval.points[[2]],z=estimate,levels=cont["5%"])[[1]])
   return(contour.95)
 }

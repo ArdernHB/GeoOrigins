@@ -4,10 +4,10 @@
 \alias{Geo.Dist2PointTable}
 \title{Returns a table of Haversine dists}
 \usage{
-Geo.Dist2PointTable(RefLatLongs = data.frame(Lats, Longs), IDs = NA)
+Geo.Dist2PointTable(RefLatLongs, IDs = NA)
 }
 \arguments{
-\item{RefLatLongs}{a matrix of n rows by two columns where n is the number of coordinates and the columns are Latitude and Longitude values in that order.}
+\item{RefLatLongs}{a matrix of n rows by 2 columns where n is the number of coordinates and the columns are Latitude and Longitude values in that order.}
 
 \item{IDs}{a vector of unique IDs that correspond with (and are in the same order as) the Latitude Longitude coordinates. These IDs will then be used to name the columns and the rows of the returned table of pairwise distances. The default is set to NA. If set to NA the returned table will not have named columns or rows.}
 }

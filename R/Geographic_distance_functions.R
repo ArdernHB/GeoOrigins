@@ -3,8 +3,8 @@
 #' Returns vector of Haversine dists
 #'
 #' This function uses the \code{geosphere} package function \code{distHaversine} to calculate multiple distances between a set of Latitude Longitude coordinates to a target Latitude Longitude coordinate.
-#' @param RefLatLongs a matrix of n rows by two columns where n is the number of coordinates and the columns are Latitude and Longitude values in that order.
-#' @param TargetLatLong a vector of two elements that are Latitude and Longitude values in that order. This is the coordinate of interest which all distances will be calculated to.
+#' @param RefLatLongs a matrix of n rows by 2 columns where n is the number of coordinates and the columns are Latitude and Longitude values in that order.
+#' @param TargetLatLong a vector of 2 elements that are Latitude and Longitude values in that order. This is the coordinate of interest which all distances will be calculated to.
 #' @return The distance in metres between the point of interest (TargetLatLong) to all other points in the reference material (RefLatLongs).
 #' @section Citations:
 #'
@@ -19,7 +19,7 @@
 #' @author Ardern Hulme-Beaman
 
 
-Geo.Dist2Point <- function(RefLatLongs = data.frame(Lats, Longs), TargetLatLong = c(Lat, Long)){
+Geo.Dist2Point <- function(RefLatLongs, TargetLatLong){
 
   Geographic.Dists <- apply(X = RefLatLongs[,2:1], MARGIN = 1, FUN = geosphere::distHaversine, p2 = TargetLatLong[2:1])
 
@@ -31,7 +31,7 @@ Geo.Dist2Point <- function(RefLatLongs = data.frame(Lats, Longs), TargetLatLong 
 #' Returns a table of Haversine dists
 #'
 #' This function uses the \code{geosphere} package function \code{distHaversine} to calculate pairwise distances among all inputted Latitude Longitude coordinates.
-#' @param RefLatLongs a matrix of n rows by two columns where n is the number of coordinates and the columns are Latitude and Longitude values in that order.
+#' @param RefLatLongs a matrix of n rows by 2 columns where n is the number of coordinates and the columns are Latitude and Longitude values in that order.
 #' @param IDs a vector of unique IDs that correspond with (and are in the same order as) the Latitude Longitude coordinates. These IDs will then be used to name the columns and the rows of the returned table of pairwise distances. The default is set to NA. If set to NA the returned table will not have named columns or rows.
 #' @return A square matrix of pairwise distances in metres among all inputted coordinates (RefLatLongs).
 #' @section Citations:
@@ -46,10 +46,10 @@ Geo.Dist2Point <- function(RefLatLongs = data.frame(Lats, Longs), TargetLatLong 
 #' @author Ardern Hulme-Beaman
 
 
-Geo.Dist2PointTable <- function(RefLatLongs = data.frame(Lats, Longs), IDs=NA){
+Geo.Dist2PointTable <- function(RefLatLongs, IDs=NA){
 
   CombinedLatLongs <- paste(RefLatLongs[,1], RefLatLongs[,2], sep = "_")
-  CombinedLatLongsFacts <- fac(CombinedLatLongs)
+  CombinedLatLongsFacts <- as.factor(CombinedLatLongs)
 
 
   UniqueLatLongsCombined <- sort(unique(CombinedLatLongs))
@@ -65,7 +65,7 @@ Geo.Dist2PointTable <- function(RefLatLongs = data.frame(Lats, Longs), IDs=NA){
     }
   }
 
-  Geographic.Dists.Mat <- as.matrix(as.dist(Geographic.Dists))
+  Geographic.Dists.Mat <- as.matrix(stats::as.dist(Geographic.Dists))
 
   CompleteRes <- Geographic.Dists.Mat[CombinedLatLongsFacts, CombinedLatLongsFacts]
 

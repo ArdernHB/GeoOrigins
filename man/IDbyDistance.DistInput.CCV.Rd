@@ -4,9 +4,8 @@
 \alias{IDbyDistance.DistInput.CCV}
 \title{Spatial Provenancing Correct Cross-Validation calculation from distance data}
 \usage{
-IDbyDistance.DistInput.CCV(Lat.Longs = data.frame(Lats = c(), Longs =
-  c()), Dist.data.mat = DistMat, verbose = TRUE, print.prog = TRUE,
-  Prov.Confidence = 0.95)
+IDbyDistance.DistInput.CCV(Lat.Longs, Dist.data.mat, verbose = TRUE,
+  print.prog = TRUE, Prov.Confidence = 0.95)
 }
 \arguments{
 \item{Lat.Longs}{a matrix of n rows by 2 columns where n is the number of reference specimens in your dataset and the columns are Latitude and Longitude values in that order. These latitude-longitude coordinates should be of the locations of the reference specimens.}

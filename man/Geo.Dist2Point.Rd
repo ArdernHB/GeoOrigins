@@ -4,13 +4,12 @@
 \alias{Geo.Dist2Point}
 \title{Returns vector of Haversine dists}
 \usage{
-Geo.Dist2Point(RefLatLongs = data.frame(Lats, Longs),
-  TargetLatLong = c(Lat, Long))
+Geo.Dist2Point(RefLatLongs, TargetLatLong)
 }
 \arguments{
-\item{RefLatLongs}{a matrix of n rows by two columns where n is the number of coordinates and the columns are Latitude and Longitude values in that order.}
+\item{RefLatLongs}{a matrix of n rows by 2 columns where n is the number of coordinates and the columns are Latitude and Longitude values in that order.}
 
-\item{TargetLatLong}{a vector of two elements that are Latitude and Longitude values in that order. This is the coordinate of interest which all distances will be calculated to.}
+\item{TargetLatLong}{a vector of 2 elements that are Latitude and Longitude values in that order. This is the coordinate of interest which all distances will be calculated to.}
 }
 \value{
 The distance in metres between the point of interest (TargetLatLong) to all other points in the reference material (RefLatLongs).
