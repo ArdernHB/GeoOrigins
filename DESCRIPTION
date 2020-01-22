@@ -5,8 +5,9 @@ Date: 2019-09-06
 Authors@R: c(person("Ardern", "Hulme-Beaman", email = "ardernhb@gmail.com", role = c("aut", "cre")), person("Anna", "Rudzinski", role = c("ctb")))
 Author: Ardern Hulme-Beaman [aut, cre], Anna Rudzinski [ctb]
 Maintainer: Ardern Hulme-Beaman <ardernhb@gmail.com>
-Description: Provenancing specimens of unknown origin and identifying trait boundaries. For publication purposes please cite Hulme-Beaman, A., Rudzinski, A., Cooper, J., Lachlan, R., Dobney, K., Thomas, M.G. (XXXX) GeoOrigins: Trait mapping and geographic provenancing of specimens without categorical constraints. XXXX
-Depends: R (>= 3.5)
+Description: Provenancing specimens of unknown origin and identifying trait boundaries.
+Depends:
+    R (>= 3.5)
 License: GPL-2
 Encoding: UTF-8
 LazyData: true
@@ -22,7 +23,11 @@ Imports:
     shapes (>= 1.1-13),
     sp (>= 1.3-1),
     rgeos (>= 0.4-3),
-    svMisc (>= 1.1.0)
+    svMisc (>= 1.1.0),
+    iterators (>= 1.0.10),
+    parallel (>= 3.5.3),
+    doParallel (>= 1.0.14),
+    foreach (>= 1.4.4)
 Suggests: 
     testthat,
     knitr,
