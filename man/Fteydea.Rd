@@ -4,13 +4,15 @@
 \name{Fteydea}
 \alias{Fteydea}
 \title{\emph{Fringilla teydea} song dataset}
-\format{A list of 4 objects:
+\format{
+A list of 4 objects:
 \describe{
   \item{Info}{Specimen information for \emph{F. teydea} dataset in the form of a data.frame with 3 columns (ID, Lat, Long) and 116 rows.}
   \item{SongDisMat}{Square distance matrix with pairwise dynamic time-warping distance between all 116 \emph{F. teydea} specimens.}
   \item{Total.Boundary}{A list including a dataframe with provenancing area (in m2) and an array of trait boundary finding correlation values for all 116 Tenerifian specimens for inputting into the \code{PlotBoundaries} function. This is provided as an example because the \code{BoundaryFinder} function can take a long time to compute.}
   \item{NESubRegion.Boundary}{A list including a dataframe with provenancing area (in m2) and an array of trait boundary finding correlation values for all 29 NE subregion specimens for inputting into the \code{PlotBoundaries} function. This is provided as an example because the \code{BoundaryFinder} function can take a long time to compute.}
-}}
+}
+}
 \usage{
 Fteydea
 }
@@ -21,5 +23,6 @@ square dissimilarity matrix a kin to a distance matrix, a boundary correlation a
 for the total dataset and a boundary correlation array for the NE subregion. The
 boundary correlation arrays are provided for convenience and as the trait
 boundary correlation calculations in the \code{BoundaryFinder} function is time consuming.
+This data is previously unpublished.
 }
 \keyword{datasets}
