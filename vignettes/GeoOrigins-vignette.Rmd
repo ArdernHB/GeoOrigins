@@ -23,7 +23,7 @@ library(GeoOrigins)
 GeoOrigins: Trait mapping and geographic provenancing of specimens without categorical constraints
 --------------------------------------------------------------------------------------------------
 
-This vignette walks the reader through the GeoOrigins package using three published datasets. The goal of this vignette is accompany the first manuscript written on this method and also provide the user with the code and tools to use this packages main functionality. The main goal of the method is to provenance specimens of unknown origin to their most likely loaction of origin without using a priori defined groups. The methods secondary function is to use the leave-one-out correct cross validation procedure to identify trait boundaries.
+This vignette walks the reader through the GeoOrigins package using three published datasets. The goal of this vignette is accompany the first manuscript written on this method and also provide the user with the code and tools to use this packages main functionality. The main goal of the method is to provenance specimens of unknown origin to their most likely location of origin without using a priori defined groups. The methods secondary function is to use the leave-one-out correct cross validation procedure to identify trait boundaries.
 
 The vignette is split into three sections to outline the methods and code used to generate the results in the accompanying paper for each of the three datasets used there.
 
@@ -42,13 +42,18 @@ colnames(RatDistMat) <- rownames(RatDistMat) <- rownames(Rpraetor$Lat.Long)
 
 With a distance matrix it is now possible to identify the minimum required *r* value to provenance each specimen in the reference dataset.
 
-This can be carried out with the `IDbyDistance.DistInput.CCV` as follows:
+This can be carried out with the `IDbyDistanceDistInputCCV` as follows:
 
 ``` {r Calculating correlation threshold for Rpraetor}
-rThres <- IDbyDistance.DistInput.CCV(Lat.Longs = Rpraetor$Lat.Long, Dist.data.mat = RatDistMat, verbose = TRUE, Prov.Confidence = .95, print.prog = FALSE)
+rThres <- IDbyDistanceDistInputCCV(LatLongs = Rpraetor$Lat.Long, 
+                                   DistDataMat = RatDistMat, 
+                                   Verbose = TRUE, 
+                                   ProvConfidence = .95,
+                                   Method = "Spearman",
+                                   PrintProg = FALSE)
 ```
 
-To demonstrate the provenancing of one of these specimens in a leave-one-out fashion we can now take this *r* value and apply it to the normal `IDbyDistance.DistInput` function. As this method is largely visually based with a plotted map output, it is first necessary to define the plotting region of the map.
+To demonstrate the provenancing of one of these specimens in a leave-one-out fashion we can now take this *r* value and apply it to the normal `IDbyDistanceDistInput` function. As this method is largely visually based with a plotted map output, it is first necessary to define the plotting region of the map.
 
 Here we set the region we wish to plot by setting identifying the minimum and maximum range of the reference specimens and then expanding that range by a set value `Rang.Exp`. This can be done as follows:
 
@@ -60,30 +65,62 @@ Lat.Range <- c(floor(min(Rpraetor$Lat.Long$Lat))-Range.Exp,ceiling(max(Rpraetor$
 
 We can then use this range information in the provenancing function.
 
-To run the provenancing function as though it was on a specimen of truly unknown origin we can take the distances to one individual in or reference dataset and run that through the method (remembering to also remove that specimen from the `Lat.Long` information). We also need to define the number of gird points the method should explore along each axis (in the order latitude longitude). As we know the true origin of this specimen we can then plot the true latitude longitude values of that specimen along with the predicted region of provinence (note this process can take some time depending on the level of resolution put into the `Range.Samp` argument):
+To run the provenancing function as though it was on a specimen of truly unknown origin we can take the distances to one individual in or reference dataset and run that through the method (remembering to also remove that specimen from the `Lat.Long` information). We also need to define the number of gird points the method should explore along each axis (in the order latitude longitude). As we know the true origin of this specimen we can then plot the true latitude longitude values of that specimen along with the predicted region of provinence (note this process can take some time depending on the level of resolution put into the `RangeSamp` argument):
 
 
 ``` {r Provenancing using a distance input method with Rpraetor}
 R.Samp <- c(12, 42)
-IDbyDistance.DistInput(Lat.Longs = Rpraetor$Lat.Long[-1,], Dist.data.vec = RatDistMat[-1,1], LongRange = Long.Range, LatRange = Lat.Range, Range.Samp = R.Samp, verbose = FALSE, Validate = FALSE, plot.Val.cor = rThres$`Provenancing.Correlation.95%.Confidence`, plot.Prov = TRUE)
+IDbyDistanceDistInput(LatLongs = Rpraetor$Lat.Long[-1,], 
+                      DistDataVec = RatDistMat[-1,1], 
+                      LongRange = Long.Range, 
+                      LatRange = Lat.Range, 
+                      RangeSamp = R.Samp, 
+                      Verbose = FALSE, 
+                      Validate = FALSE, 
+                      PlotValCor = rThres$`Provenancing.Correlation.95%.Confidence`,
+                      Method = 'Spearman',
+                      PlotProv = TRUE)
 points(x = Rpraetor$Lat.Long$Long[1], y=Rpraetor$Lat.Long$Lat[1], col='blue', pch=16)
 ```
 
-We can also apply this directly to the data by inputting the data for an unknown specimen in the `Target.data`argument. If shape data is being used then the function can be set to apply a full Procrustes distance (i.e. pairwise calculated distances where each specimen undergoes a Procrustes rotation, using the `proc.dist` function of the `shapes` package) by setting the `Shape.Data` argument to TRUE, providing the number of dimensions (2 or 3) in the `Shape.dim` argument and finally setting the `DistMethod` argument to `"Proc"`. As the landmark data provided here is in array format it first needs to be converted to a matrix for use in this function. This achieves the same result as previously displayed.
+We can also apply this directly to the data by inputting the data for an unknown specimen in the `TargetData`argument. If shape data is being used then the function can be set to apply a full Procrustes distance (i.e. pairwise calculated distances where each specimen undergoes a Procrustes rotation, using the `proc.dist` function of the `shapes` package) by setting the `ShapeData` argument to TRUE, providing the number of dimensions (2 or 3) in the `ShapeDim` argument and finally setting the `DistMethod` argument to `"Proc"`. As the landmark data provided here is in array format it first needs to be converted to a matrix for use in this function. This achieves the same result as previously displayed.
 
 ``` {r Provenancing using raw shape data input method with Rpraetor}
 RpraetorDataMat <- Array2Mat(Rpraetor$LMs)
-IDbyDistance.RawData(Lat.Longs = Rpraetor$Lat.Long[-1,], Target.data = RpraetorDataMat[1,], Ref.data = RpraetorDataMat[-1,], Shape.Data = TRUE, Shape.dim = 2, DistMethod = "Proc", LongRange = Long.Range, LatRange = Lat.Range, Range.Samp = R.Samp, verbose = FALSE, Validate = FALSE, plot.Val.cor = rThres$`Provenancing.Correlation.95%.Confidence`, plot.Prov = TRUE)
+IDbyDistanceRawData(LatLongs = Rpraetor$Lat.Long[-1,], 
+                    TargetData = RpraetorDataMat[1,], 
+                    RefData = RpraetorDataMat[-1,], 
+                    ShapeData = TRUE, 
+                    ShapeDim = 2, 
+                    DistMethod = "Proc", 
+                    LongRange = Long.Range, 
+                    LatRange = Lat.Range, 
+                    RangeSamp = R.Samp, 
+                    Verbose = FALSE, 
+                    Validate = FALSE, 
+                    PlotValCor = rThres$`Provenancing.Correlation.95%.Confidence`, 
+                    Method = 'Spearman',
+                    PlotProv = TRUE)
 points(x = Rpraetor$Lat.Long$Long[1], y=Rpraetor$Lat.Long$Lat[1], col='blue', pch=16)
 ```
 
 
 
-We can then use the `BoundaryFinder` function to extend this method to identify trait boundaries. This can take some time as it needs to construct a provenancing map for every specimen in the reference dataset and compile the data from that. Note here `ignore.prompts` is set to TRUE for ease of use in the vignette, but the default is FALSE and will ask you if the datadump location is correct and if the specimen naming sequence is appropriate:
+We can then use the `BoundaryFinder` function to extend this method to identify trait boundaries. This can take some time as it needs to construct a provenancing map for every specimen in the reference dataset and compile the data from that. Note here `IgnorePrompts` is set to TRUE for ease of use in the vignette, but the default is FALSE and will ask you if the datadump location is correct and if the specimen naming sequence is appropriate:
 
 ``` {r Trait boundary finding with Rpraetor data}
 LowResRsamp.Rp <- c(7,20)
-Boundaryfinding <- BoundaryFinder(Lat.Longs = Rpraetor$Lat.Long, Ref.Dist.mat = RatDistMat, LongRange = Long.Range, LatRange = Lat.Range, Range.Samp = LowResRsamp.Rp, plot.Val.cor = rThres$`Provenancing.Correlation.95%.Confidence`, Expand.map = c(0,0), Ref.IDs = rownames(Rpraetor$Lat.Long), DataDump = FALSE, ignore.prompts = TRUE)
+Boundaryfinding <- BoundaryFinder(LatLongs = Rpraetor$Lat.Long, 
+                                  RefDistMat = RatDistMat, 
+                                  LongRange = Long.Range, 
+                                  LatRange = Lat.Range, 
+                                  RangeSamp = LowResRsamp.Rp, 
+                                  PlotValCor = rThres$`Provenancing.Correlation.95%.Confidence`,
+                                  Method = 'Spearman',
+                                  ExpandMap = c(0,0), 
+                                  RefIDs = rownames(Rpraetor$Lat.Long), 
+                                  DataDump = FALSE, 
+                                  IgnorePrompts = TRUE)
 ```
 
 The `BoundaryFinder` function also outputs the percentage the provenancing region overlaps with the region defined by all the reference collection. This can be examined as a histogram:
@@ -96,14 +133,28 @@ hist(as.numeric(Boundaryfinding$ProvenanceRange[,2]), breaks=10, xlab = "percent
 The boundary finding data can be replotted either from the datadump path or from the array generated from the `BoundaryFinder` function if the data has not been dumped. Here for simplicity we will use the previously generated array. The `PlotBoundaries` function allows for changing the colour and plotting of the map.
 
 ``` {r Plotting Rpraetor boundary data 1}
-PlotBoundaries(plot.Val.cor = rThres$`Provenancing.Correlation.95%.Confidence`, DataDump = FALSE, RawCorArray = Boundaryfinding$RawCorData, plotLong = colnames(Boundaryfinding$RawCorData), plotLat = rownames(Boundaryfinding$RawCorData), Lat.Longs = Rpraetor$Lat.Long, TileSize = 1, BoundaryHue = c(1,1))
+PlotBoundaries(PlotValCor = rThres$`Provenancing.Correlation.95%.Confidence`, 
+               DataDump = FALSE, 
+               RawCorArray = Boundaryfinding$RawCorData, 
+               plotLong = colnames(Boundaryfinding$RawCorData), 
+               plotLat = rownames(Boundaryfinding$RawCorData), 
+               LatLongs = Rpraetor$Lat.Long,
+               TileSize = 1, 
+               BoundaryHue = c(1,1))
 ```
 
 Here the `TileSize` setting doesn't match up with the resolution of the grid sampling that was used for generating this trait boundary object. Here we can adjust the TileSize setting to attempt to account for this. We can also change the `BoundaryHue` argument to change the colour of the plotted boundaries.
 
 
 ``` {r Plotting Rpraetor boundary data 2}
-PlotBoundaries(plot.Val.cor = rThres$`Provenancing.Correlation.95%.Confidence`, DataDump = FALSE, RawCorArray = Boundaryfinding$RawCorData, plotLong = colnames(Boundaryfinding$RawCorData), plotLat = rownames(Boundaryfinding$RawCorData), Lat.Longs = Rpraetor$Lat.Long, TileSize = 2, BoundaryHue = c(0.5,1))
+PlotBoundaries(PlotValCor = rThres$`Provenancing.Correlation.95%.Confidence`, 
+               DataDump = FALSE, 
+               RawCorArray = Boundaryfinding$RawCorData, 
+               plotLong = colnames(Boundaryfinding$RawCorData), 
+               plotLat = rownames(Boundaryfinding$RawCorData), 
+               LatLongs = Rpraetor$Lat.Long, 
+               TileSize = 3, 
+               BoundaryHue = c(0.5,1))
 ```
 
 
@@ -115,20 +166,44 @@ The second dataset we will examine comes from 553 specimens of *M. arvalis*.
 
 For this dataset we will work with pregenerated boundary correlation arrays. The original landmark is available from the original publication Cucchi et al 2014, but a procrustes distances matrix is also provided here for the r threshold calculation.
 
-Due to pakage dataset size limitations the following trait boundary correlation arrays provided here are at a lower resolution (i.e. the spatial grid has been sampled at a lower level by setting the `Range.Samp` argument to a lower values) than those used to build the figures in the main body of the paper. The level of resolution used in the publication can be achieved by setting the `Range.Samp` value to `c(30,36)` for the full species range and `c(30,20)` for the Orkney only range.
+Due to pakage dataset size limitations the following trait boundary correlation arrays provided here are at a lower resolution (i.e. the spatial grid has been sampled at a lower level by setting the `RangeSamp` argument to a lower values) than those used to build the figures in the main body of the paper. The level of resolution used in the publication can be achieved by setting the `RangeSamp` value to `c(30,36)` for the full species range and `c(30,20)` for the Orkney only range.
 
 
 ``` {r Calculating correlation threshold and plotting trait boundaries for Marvalis}
-MarvalisrThres <- IDbyDistance.DistInput.CCV(Lat.Longs = Marvalis$Info[,3:4], Dist.data.mat = Marvalis$Proc.Dist, verbose = TRUE, Prov.Confidence = .95, print.prog = FALSE)
-PlotBoundaries(plot.Val.cor = MarvalisrThres$`Provenancing.Correlation.95%.Confidence`, DataDump = FALSE, RawCorArray = Marvalis$Total.Boundary$RawCorData, plotLong = colnames(Marvalis$Total.Boundary$RawCorData), plotLat = rownames(Marvalis$Total.Boundary$RawCorData), Lat.Longs = Marvalis$Info[,3:4], TileSize = 2.5, BoundaryHue = c(0.5,1))
+MarvalisrThres <- IDbyDistanceDistInputCCV(LatLongs = Marvalis$Info[,3:4], 
+                                           DistDataMat = Marvalis$Proc.Dist, 
+                                           Verbose = TRUE, 
+                                           ProvConfidence = .95,
+                                           Method = 'Spearman',
+                                           PrintProg = FALSE)
+PlotBoundaries(PlotValCor = MarvalisrThres$`Provenancing.Correlation.95%.Confidence`, 
+               DataDump = FALSE, 
+               RawCorArray = Marvalis$Total.Boundary$RawCorData, 
+               plotLong = colnames(Marvalis$Total.Boundary$RawCorData), 
+               plotLat = rownames(Marvalis$Total.Boundary$RawCorData), 
+               LatLongs = Marvalis$Info[,3:4],
+               TileSize = 2.5, 
+               BoundaryHue = c(0.5,1))
 ```
 
 When applying it to just the Orkney range we first need to select out just the Orkney specimens. This can be done with the information provided in the `Marvalis$Info` object.
 
 ``` {r Plotting trait boundaries for Orkney Marvalis}
 OrkneySpecimens <- which(Marvalis$Info$Geographic.Division=='Orkney Is.')
-OrkMarvalisrThres <- IDbyDistance.DistInput.CCV(Lat.Longs = Marvalis$Info[OrkneySpecimens,3:4], Dist.data.mat = Marvalis$Proc.Dist[OrkneySpecimens,OrkneySpecimens], verbose = TRUE, Prov.Confidence = .95, print.prog = FALSE)
-PlotBoundaries(plot.Val.cor = OrkMarvalisrThres$`Provenancing.Correlation.95%.Confidence`, DataDump = FALSE, RawCorArray = Marvalis$Orkney.Boundary$RawCorData, plotLong = colnames(Marvalis$Orkney.Boundary$RawCorData), plotLat = rownames(Marvalis$Orkney.Boundary$RawCorData), Lat.Longs = Marvalis$Info[OrkneySpecimens,3:4], TileSize = 2.1, BoundaryHue = c(0.5,1))
+OrkMarvalisrThres <- IDbyDistanceDistInputCCV(LatLongs = Marvalis$Info[OrkneySpecimens,3:4], 
+                                              DistDataMat = Marvalis$Proc.Dist[OrkneySpecimens,OrkneySpecimens], 
+                                              Verbose = TRUE, 
+                                              ProvConfidence = .95, 
+                                              Method = 'Spearman',
+                                              PrintProg = FALSE)
+PlotBoundaries(PlotValCor = OrkMarvalisrThres$`Provenancing.Correlation.95%.Confidence`, 
+               DataDump = FALSE, 
+               RawCorArray = Marvalis$Orkney.Boundary$RawCorData, 
+               plotLong = colnames(Marvalis$Orkney.Boundary$RawCorData), 
+               plotLat = rownames(Marvalis$Orkney.Boundary$RawCorData), 
+               LatLongs = Marvalis$Info[OrkneySpecimens,3:4], 
+               TileSize = 2.1, 
+               BoundaryHue = c(0.5,1))
 ```
 
 
@@ -144,8 +219,20 @@ As with the other datasets provided this is at a lower resolution than provided 
 
 
 ``` {r Calculating correlation threshold and plotting trait boundaries for Fteydea}
-FteydeaThres <- IDbyDistance.DistInput.CCV(Lat.Longs = Fteydea$Info[,2:3], Dist.data.mat = Fteydea$SongDisMat, verbose = TRUE, Prov.Confidence = .95, print.prog = FALSE)
-PlotBoundaries(plot.Val.cor = FteydeaThres$`Provenancing.Correlation.95%.Confidence`, DataDump = FALSE, RawCorArray = Fteydea$Total.Boundary$RawCorData, plotLong = colnames(Fteydea$Total.Boundary$RawCorData), plotLat = rownames(Fteydea$Total.Boundary$RawCorData), Lat.Longs = Fteydea$Info[,2:3], TileSize = 2.5, BoundaryHue = c(0.5,1))
+FteydeaThres <- IDbyDistanceDistInputCCV(LatLongs = Fteydea$Info[,2:3], 
+                                         DistDataMat = sqrt(Fteydea$SongDisMat), 
+                                         Verbose = TRUE, 
+                                         ProvConfidence = .95,
+                                         Method = 'Spearman',
+                                         PrintProg = FALSE)
+PlotBoundaries(PlotValCor = FteydeaThres$`Provenancing.Correlation.95%.Confidence`, 
+               DataDump = FALSE, 
+               RawCorArray = Fteydea$Total.Boundary$RawCorData, 
+               plotLong = colnames(Fteydea$Total.Boundary$RawCorData), 
+               plotLat = rownames(Fteydea$Total.Boundary$RawCorData), 
+               LatLongs = Fteydea$Info[,2:3], 
+               TileSize = 2.5, 
+               BoundaryHue = c(0.5,1))
 ```
 
 
@@ -160,22 +247,42 @@ LogFteydeaDisMat[which(is.infinite(LogFteydeaDisMat))] <- 0
 NE <- which(Fteydea$Info$Lat>28.4)
 NEFtInfo <- Fteydea$Info[NE,]
 NEDisMat <- LogFteydeaDisMat[NE,NE]
-NEFtrThres <- IDbyDistance.DistInput.CCV(Lat.Longs = NEFtInfo[,2:3], Dist.data.mat = NEDisMat, verbose = TRUE, Prov.Confidence = .95, print.prog = FALSE)
+NEFtrThres <- IDbyDistanceDistInputCCV(LatLongs = NEFtInfo[,2:3], 
+                                       DistDataMat = NEDisMat, 
+                                       Verbose = TRUE, 
+                                       ProvConfidence = .95, 
+                                       PrintProg = FALSE)
 Long.Range.Exp <- .005
 Lat.Range.Exp <- .001
 NEFt.Long.Range <- c(min(NEFtInfo$Long)-Long.Range.Exp, max(NEFtInfo$Long)+Long.Range.Exp)
 NEFt.Lat.Range <- c(min(NEFtInfo$Lat)-Lat.Range.Exp, max(NEFtInfo$Lat)+Lat.Range.Exp)
 NEFtR.Samp <- c(5)
-IDbyDistance.DistInput(Lat.Longs = NEFtInfo[-1,2:3], Dist.data.vec = NEDisMat[-1,1], LongRange = NEFt.Long.Range, LatRange = NEFt.Lat.Range, Range.Samp = NEFtR.Samp, verbose = FALSE, Validate = FALSE, plot.Val.cor = NEFtrThres$`Provenancing.Correlation.95%.Confidence`, plot.Prov = TRUE)
+IDbyDistanceDistInput(LatLongs = NEFtInfo[-1,2:3], 
+                       DistDataVec = NEDisMat[-1,1], 
+                       LongRange = NEFt.Long.Range, 
+                       LatRange = NEFt.Lat.Range, 
+                       RangeSamp = NEFtR.Samp, 
+                       Verbose = FALSE, 
+                       Validate = FALSE, 
+                       PlotValCor = NEFtrThres$`Provenancing.Correlation.95%.Confidence`, 
+                       PlotProv = TRUE)
 points(x = NEFtInfo$Long[1], y=NEFtInfo$Lat[1], col='blue', pch=16)
 ```
 
-In comparison if we increase the `Range.Samp` value such that a number of grid squares reach the r threshold but not enough to sufficiently return a polygon of a likely origin region the function returns a map with those grid squares highlighted and the following warning message:
+In comparison if we increase the `RangeSamp` value such that a number of grid squares reach the r threshold but not enough to sufficiently return a polygon of a likely origin region the function returns a map with those grid squares highlighted and the following warning message:
 
 
 ``` {r Addressing potential issues with high precision datasets with examples from Fteydea 1}
 NEFtR.Samp <- c(15)
-IDbyDistance.DistInput(Lat.Longs = NEFtInfo[-1,2:3], Dist.data.vec = NEDisMat[-1,1], LongRange = NEFt.Long.Range, LatRange = NEFt.Lat.Range, Range.Samp = NEFtR.Samp, verbose = FALSE, Validate = FALSE, plot.Val.cor = NEFtrThres$`Provenancing.Correlation.95%.Confidence`, plot.Prov = TRUE)
+IDbyDistanceDistInput(LatLongs = NEFtInfo[-1,2:3], 
+                       DistDataVec = NEDisMat[-1,1], 
+                       LongRange = NEFt.Long.Range, 
+                       LatRange = NEFt.Lat.Range, 
+                       RangeSamp = NEFtR.Samp, 
+                       Verbose = FALSE, 
+                       Validate = FALSE, 
+                       PlotValCor = NEFtrThres$`Provenancing.Correlation.95%.Confidence`, 
+                       PlotProv = TRUE)
 points(x = NEFtInfo$Long[1], y=NEFtInfo$Lat[1], col='blue', pch=16)
 ```
 
@@ -184,7 +291,15 @@ If we increase the grid sampling further the function provides a polygon of the 
 
 ``` {r Addressing potential issues with high precision datasets with examples from Fteydea 2}
 NEFtR.Samp <- c(25)
-IDbyDistance.DistInput(Lat.Longs = NEFtInfo[-1,2:3], Dist.data.vec = NEDisMat[-1,1], LongRange = NEFt.Long.Range, LatRange = NEFt.Lat.Range, Range.Samp = NEFtR.Samp, verbose = FALSE, Validate = FALSE, plot.Val.cor = NEFtrThres$`Provenancing.Correlation.95%.Confidence`, plot.Prov = TRUE)
+IDbyDistanceDistInput(LatLongs = NEFtInfo[-1,2:3], 
+                       DistDataVec = NEDisMat[-1,1], 
+                       LongRange = NEFt.Long.Range, 
+                       LatRange = NEFt.Lat.Range, 
+                       RangeSamp = NEFtR.Samp, 
+                       Verbose = FALSE, 
+                       Validate = FALSE, 
+                       PlotValCor = NEFtrThres$`Provenancing.Correlation.95%.Confidence`, 
+                       PlotProv = TRUE)
 points(x = NEFtInfo$Long[1], y=NEFtInfo$Lat[1], col='blue', pch=16)
 ```
 
@@ -193,19 +308,35 @@ If we increase the grid sampling further again the function provides a more accu
 
 ``` {r Addressing potential issues with high precision datasets with examples from Fteydea 3}
 NEFtR.Samp <- c(45)
-IDbyDistance.DistInput(Lat.Longs = NEFtInfo[-1,2:3], Dist.data.vec = NEDisMat[-1,1], LongRange = NEFt.Long.Range, LatRange = NEFt.Lat.Range, Range.Samp = NEFtR.Samp, verbose = FALSE, Validate = FALSE, plot.Val.cor = NEFtrThres$`Provenancing.Correlation.95%.Confidence`, plot.Prov = TRUE)
+IDbyDistanceDistInput(LatLongs = NEFtInfo[-1,2:3], 
+                       DistDataVec = NEDisMat[-1,1], 
+                       LongRange = NEFt.Long.Range, 
+                       LatRange = NEFt.Lat.Range, 
+                       RangeSamp = NEFtR.Samp, 
+                       Verbose = FALSE, 
+                       Validate = FALSE, 
+                       PlotValCor = NEFtrThres$`Provenancing.Correlation.95%.Confidence`, 
+                       PlotProv = TRUE)
 points(x = NEFtInfo$Long[1], y=NEFtInfo$Lat[1], col='blue', pch=16)
 ```
 
 
-This issue can also occur when using the `BoundaryFinder` function. If we set the grid sampling too low and the likely origin location for some reference specimens is poorly defined then there is no correlation data from which a boundary can be identified. Howevr, also note that if the results are extremely percise and individuals are identified to a very specific region then there may not be enough overlap in boundaries to confidently call a trait boundary; this is effectively because the level of precision is so high that each individual has its own boundary and a general trend cannot be extrapolated.
+This issue can also occur when using the `BoundaryFinder` function. If we set the grid sampling too low and the likely origin location for some reference specimens is poorly defined then there is no correlation data from which a boundary can be identified. However, also note that if the results are extremely precise and individuals are identified to a very specific region then there may not be enough overlap in boundaries to confidently call a trait boundary; this is effectively because the level of precision is so high that each individual has its own boundary and a general trend cannot be extrapolated.
 
-Also note that with the `BoundaryFinder` function the overlap between the predicted origin and the reference dataset distribution is returned, but at low resolutions there is no polygon to calculate this value from so no percentage is returned. At low resolution it is also possible that there may be no overlap between these two polygons (e.g. if the only grid square that does meet the threashold falls outside the reference dataset distribution) and as a result a warning will be generated saying the polygons do not intersect. See the below examples:
+Also note that with the `BoundaryFinder` function the overlap between the predicted origin and the reference dataset distribution is returned, but at low resolutions there is no polygon to calculate this value from so no percentage is returned. At low resolution it is also possible that there may be no overlap between these two polygons (e.g. if the only grid square that does meet the threshold falls outside the reference dataset distribution) and as a result a warning will be generated saying the polygons do not intersect. See the below examples:
 
 
 ``` {r Addressing potential issues with high precision datasets with examples from Fteydea 4}
 NEFtR.Samp <- c(5)
-NEFt.Boundaryfinding <- BoundaryFinder(Lat.Longs = NEFtInfo[,2:3], Ref.Dist.mat = NEDisMat, DataDump = FALSE, LongRange = NEFt.Long.Range, LatRange = NEFt.Lat.Range, Range.Samp = NEFtR.Samp, plot.Val.cor = NEFtrThres$`Provenancing.Correlation.95%.Confidence`,Ref.IDs = NEFtInfo$ID)
+NEFt.Boundaryfinding <- BoundaryFinder(LatLongs = NEFtInfo[,2:3], 
+                                       RefDistMat = NEDisMat, 
+                                       DataDump = FALSE, 
+                                       LongRange = NEFt.Long.Range, 
+                                       LatRange = NEFt.Lat.Range, 
+                                       RangeSamp = NEFtR.Samp, 
+                                       PlotValCor = NEFtrThres$`Provenancing.Correlation.95%.Confidence`,
+                                       RefIDs = NEFtInfo$ID,
+                                       IgnorePrompts = TRUE)
 ```
 
 
@@ -213,5 +344,13 @@ And again with a higher resolution:
 
 ``` {r Addressing potential issues with high precision datasets with examples from Fteydea 5}
 NEFtR.Samp <- c(15)
-NEFt.MidRes.Boundaryfinding <- BoundaryFinder(Lat.Longs = NEFtInfo[,2:3], Ref.Dist.mat = NEDisMat, DataDump = FALSE, LongRange = NEFt.Long.Range, LatRange = NEFt.Lat.Range, Range.Samp = NEFtR.Samp, plot.Val.cor = NEFtrThres$`Provenancing.Correlation.95%.Confidence`,Ref.IDs = NEFtInfo$ID)
+NEFt.MidRes.Boundaryfinding <- BoundaryFinder(LatLongs = NEFtInfo[,2:3], 
+                                              RefDistMat = NEDisMat, 
+                                              DataDump = FALSE, 
+                                              LongRange = NEFt.Long.Range, 
+                                              LatRange = NEFt.Lat.Range, 
+                                              RangeSamp = NEFtR.Samp, 
+                                              PlotValCor = NEFtrThres$`Provenancing.Correlation.95%.Confidence`,
+                                              RefIDs = NEFtInfo$ID,
+                                              IgnorePrompts = TRUE)
 ```
