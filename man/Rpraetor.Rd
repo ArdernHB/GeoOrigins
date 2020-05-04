@@ -4,11 +4,13 @@
 \name{Rpraetor}
 \alias{Rpraetor}
 \title{\emph{Rattus praetor} shape dataset}
-\format{A list of 2 objects:
+\format{
+A list of 2 objects:
 \describe{
   \item{Lat.Long}{Latitude longitude data for \emph{R. praetor} specimens in the form of a data.frame with 2 columns (Lat, Long) and 48 rows. Rownames are specimen IDs.}
   \item{LMs}{Landmark data of \emph{R. praetor} dental shape in the form of an array. The array has 24 rows representing landmarks, with 2 columns representing XY and 48 individuals.}
-}}
+}
+}
 \source{
 \url{https://doi.org/10.1016/j.mambio.2018.04.002}
 }

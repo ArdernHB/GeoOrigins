@@ -4,13 +4,15 @@
 \name{Marvalis}
 \alias{Marvalis}
 \title{\emph{Microtus arvalis} shape dataset}
-\format{A list of 3 objects:
+\format{
+A list of 4 objects:
 \describe{
   \item{Info}{Specimen information for \emph{M. arvalis} dataset in the form of a data.frame with 4 columns (Population, Geographic Division, Lat, Long) and 553 rows. Rownames are specimen IDs.}
   \item{Proc.Dist}{Square distance matrix with pairwise Procrustes Distances between all 553 \emph{M. arvalis} specimens.}
   \item{Orkney.Boundary}{A list including a dataframe with provenancing area (in m2) and an array of trait boundary finding correlation values for all 131 Orkney specimens for inputting into the \code{PlotBoundaries} function. This is provided as an example because the \code{BoundaryFinder} function can take a long time to compute.}
   \item{Total.Boundary}{A list including a dataframe with provenancing area (in m2) and an array of trait boundary finding correlation values for all 553 vole specimens for inputting into the \code{PlotBoundaries} function. This is provided as an example because the \code{BoundaryFinder} function can take a long time to compute.}
-}}
+}
+}
 \source{
 \url{https://doi.org/10.1111/evo.12476}
 }
