@@ -32,7 +32,7 @@ chr2nu <- function(X){as.numeric(as.character(X))}
 #'
 #' This function returns an array
 #'
-#' @param mat is a matrix of landmark data
+#' @param Mat is a matrix of landmark data
 #' @param LMdim is the number of dimensions of the data, either 2 or 3
 #'
 #' @keywords internal
@@ -41,13 +41,13 @@ chr2nu <- function(X){as.numeric(as.character(X))}
 
 
 
-Mat2Array <- function(mat, LMdim){
-  NewArray <- array(data = NA, dim = c(dim(mat)[2]/LMdim, LMdim, dim(mat)[1]))
+Mat2Array <- function(Mat, LMdim){
+  NewArray <- array(data = NA, dim = c(dim(Mat)[2]/LMdim, LMdim, dim(Mat)[1]))
 
 
-  for (i in 1:dim(mat)[1]){
+  for (i in 1:dim(Mat)[1]){
     #i <- 1
-    Mat4Array <- matrix(as.numeric(mat[i,]), nrow = dim(mat)[2]/LMdim, ncol = LMdim, byrow = TRUE)
+    Mat4Array <- matrix(as.numeric(Mat[i,]), nrow = dim(Mat)[2]/LMdim, ncol = LMdim, byrow = TRUE)
     NewArray[,,i] <- Mat4Array
   }
 
@@ -66,7 +66,7 @@ Mat2Array <- function(mat, LMdim){
 #'
 #' This function returns an array
 #'
-#' @param arr is an array of landmark data
+#' @param Array is an array of landmark data
 #'
 #' @keywords internal
 #' @author Ardern Hulme-Beaman
@@ -81,5 +81,64 @@ Array2Mat <- function(Array){
   }
   return(Matrix)
 }
+
+
+
+
+
+
+UserInputAssessment <- function(LatLongs, RefDistMat=NA, TargetData=NA, LongRange, LatRange, RangeSamp, Method){
+
+  if (!(is.na(RefDistMat))){
+    if (dim(LatLongs)[1]!=dim(RefDistMat)[1]){
+      stop('Error: the number of latitude and longitude coordinates you have provided do not match the number of specimens in the dataset.
+     \n Please check these match and most importantly are in the same order and rerun the function')
+    }
+  }
+
+  if (!(is.na(TargetData))){
+    if (dim(LatLongs)[1]!=dim(TargetData)[3]){
+      stop('Error: the number of latitude and longitude coordinates you have provided do not match the number of specimens in the dataset.
+     \n Please check these match and most importantly are in the same order and rerun the function')
+    }
+  }
+
+
+
+  if (dim(LatLongs)[2]!=2){
+    stop('Error: the matrix of latitude and longitude coordinates you have provided does not contain 2 columns.
+     \n Please check that you have supplied the correct data and in the correct format.
+     \n Importantly, please check that the supplied latitude and longitude data is in the same order as the distance data.')
+  }
+
+
+  if (length(RangeSamp)>2){
+    stop('Error: the range sampling provided contains more than 2 values.
+     \n Please provide either 1 value if you wish to sample both latitude and longitude equally
+     \n (i.e. if the region you are looking at is approximately square) or
+     \n please provide 2 values if you wish them to be sampled to different levels
+     \n (i.e. if the region you are looking at is not square')
+  }
+
+  if (length(LongRange)!=2){
+    stop('Error: you have provided more than 2 values in LongRange, these should be the 2 values denoting the maximum and minimum longitude range to be examined')
+
+  }
+
+  if (length(LatRange)!=2){
+    stop('Error: you have provided more than 2 values in LatRange, these should be the 2 values denoting the maximum and minimum latitude range to be examined')
+  }
+
+
+  if (!(is.character(Method) | length(Method)>1)){
+
+    stop('Error: you have not selected your preferred correlation Method.
+     \n Please provide a single method, either Spearman or Pearson')
+
+  }
+
+}
+
+
 
 
