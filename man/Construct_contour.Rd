@@ -13,7 +13,7 @@ Construct_contour(LatLongs)
 Contour polygon
 }
 \description{
-This function takes the Lat Longs that form a range around which a smooth contour is required. The contour is calculated base on kernal density estimation. This function uses the \code{kde} function of the \code{ks} Kernel Smoothing package and \code{contourLines} function of \code{grDevices} package.
+This function takes the Lat Longs that form a range around which a smooth contour is required. The contour is calculated base on kernal density estimation. This function uses the \code{\link[ks]{kde}} function of the \code{ks} Kernel Smoothing package and \code{\link[grDevices]{contourLines}} function of \code{grDevices} package.
 }
 \author{
 Anna Rudzinski

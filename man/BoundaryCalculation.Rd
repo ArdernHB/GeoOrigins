@@ -4,12 +4,12 @@
 \alias{BoundaryCalculation}
 \title{Internal function for identifies boundaries from spatial correlation scores.}
 \usage{
-BoundaryCalculation(Map.matrix, plot.Val.cor)
+BoundaryCalculation(MapMatrix, PlotValCor)
 }
 \arguments{
-\item{Map.matrix}{is a matrix of correlation values that correspond to grid reference locations}
+\item{MapMatrix}{is a matrix of correlation values that correspond to grid reference locations}
 
-\item{plot.Val.cor}{numeric correlation value that is used to determine the most likely origin of the specimen. This value can be calculated by using the correct cross-validation method and identifying the correlation value that will correctly identify a desired percentage of specimens (e.g. 95\%).}
+\item{PlotValCor}{numeric correlation value that is used to determine the most likely origin of the specimen. This value can be calculated by using the correct cross-validation method and identifying the correlation value that will correctly identify a desired percentage of specimens (e.g. 95\%).}
 }
 \value{
 This function returns a matrix of logical TRUE/FALSE values identifying the boundary of the desired correlation value.

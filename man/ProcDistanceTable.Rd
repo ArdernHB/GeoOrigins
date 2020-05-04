@@ -10,11 +10,11 @@ ProcDistanceTable(A)
 \item{A}{is a three dimensional data array of landmark x landmark dimensions x specimens}
 }
 \value{
-This function returns a square matrix of Procrustes distances, which is required for both the \code{IDbyDistance.RawData.CCV} and the \code{BoundaryFinder} functions.
+This function returns a square matrix of Procrustes distances, which is required for both the \code{IDbyDistanceRawDataCCV} and the \code{BoundaryFinder} functions.
 }
 \description{
 This function builds a square matrix of pairwise procrustes distances among specimens using
-the \code{procdist} function from the \code{shapes} package.
+the \code{\link[shapes]{procdist}} function from the \code{shapes} package.
 }
 \section{Citations}{
 
@@ -23,3 +23,10 @@ Ian L. Dryden (2016). shapes: Statistical Shape Analysis. R package version 1.1-
 https://CRAN.R-project.org/package=shapes
 }
 
+\examples{
+RatDistMat <- ProcDistanceTable(Rpraetor$LMs)
+
+}
+\seealso{
+\code{\link{ProcDistanceTablePar}}
+}

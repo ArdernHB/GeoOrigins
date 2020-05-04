@@ -4,10 +4,10 @@
 \alias{Mat2Array}
 \title{Internal function for conversion of a matrix of landmarks to an array}
 \usage{
-Mat2Array(mat, LMdim)
+Mat2Array(Mat, LMdim)
 }
 \arguments{
-\item{mat}{is a matrix of landmark data}
+\item{Mat}{is a matrix of landmark data}
 
 \item{LMdim}{is the number of dimensions of the data, either 2 or 3}
 }

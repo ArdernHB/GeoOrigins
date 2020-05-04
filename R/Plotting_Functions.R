@@ -19,15 +19,17 @@ transpar<-function(Colour, alpha=100){
 
 #' Internal function: Constructing smooth contour polygon
 #'
-#' This function takes the Lat Longs that form a range around which a smooth contour is required. The contour is calculated base on kernal density estimation. This function uses the \code{kde} function of the \code{ks} Kernel Smoothing package and \code{contourLines} function of \code{grDevices} package.
+#' This function takes the Lat Longs that form a range around which a smooth contour is required. The contour is calculated base on kernal density estimation. This function uses the \code{\link[ks]{kde}} function of the \code{ks} Kernel Smoothing package and \code{\link[grDevices]{contourLines}} function of \code{grDevices} package.
 #' @param LatLongs A dataframe with a 'Lat' column and a 'Long' column containing all latitude-longitude co-ordinates that are to form the basis upon which the contour is formed.
 #' @return Contour polygon
 #' @author Anna Rudzinski
 #' @author Ardern Hulme-Beaman
 #' @keywords internal
 #' @keywords contour
+#' @import ks
 
 Construct_contour <- function(LatLongs) {
+  #LatLongs = as.data.frame(CoordsHeat)
   x <-  cbind(chr2nu(LatLongs$Longs), chr2nu(LatLongs$Lats))
   KSres <- ks::kde(x=x, H=ks::Hpi(x=x), compute.cont=TRUE)
   contour.95 <- with(KSres, grDevices::contourLines(x=eval.points[[1]],y=eval.points[[2]],z=estimate,levels=cont["5%"])[[1]])
