@@ -7,7 +7,7 @@
 Array2Mat(Array)
 }
 \arguments{
-\item{arr}{is an array of landmark data}
+\item{Array}{is an array of landmark data}
 }
 \value{
 This function returns an array
