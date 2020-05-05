@@ -225,7 +225,7 @@ FteydeaThres <- IDbyDistanceDistInputCCV(LatLongs = Fteydea$Info[,2:3],
                                          ProvConfidence = .95,
                                          Method = 'Spearman',
                                          PrintProg = FALSE)
-PlotBoundaries(PlotValCor = FteydeaThres$`Provenancing.Correlation.95%.Confidence`, 
+PlotBoundaries(PlotValCor = FteydeaThres[[1]], 
                DataDump = FALSE, 
                RawCorArray = Fteydea$Total.Boundary$RawCorData, 
                plotLong = colnames(Fteydea$Total.Boundary$RawCorData), 
@@ -251,21 +251,23 @@ NEFtrThres <- IDbyDistanceDistInputCCV(LatLongs = NEFtInfo[,2:3],
                                        DistDataMat = NEDisMat, 
                                        Verbose = TRUE, 
                                        ProvConfidence = .95, 
-                                       PrintProg = FALSE)
+                                       PrintProg = FALSE,
+                                       Method = 'Spearman')
 Long.Range.Exp <- .005
 Lat.Range.Exp <- .001
 NEFt.Long.Range <- c(min(NEFtInfo$Long)-Long.Range.Exp, max(NEFtInfo$Long)+Long.Range.Exp)
 NEFt.Lat.Range <- c(min(NEFtInfo$Lat)-Lat.Range.Exp, max(NEFtInfo$Lat)+Lat.Range.Exp)
 NEFtR.Samp <- c(5)
 IDbyDistanceDistInput(LatLongs = NEFtInfo[-1,2:3], 
-                       DistDataVec = NEDisMat[-1,1], 
-                       LongRange = NEFt.Long.Range, 
-                       LatRange = NEFt.Lat.Range, 
-                       RangeSamp = NEFtR.Samp, 
-                       Verbose = FALSE, 
-                       Validate = FALSE, 
-                       PlotValCor = NEFtrThres$`Provenancing.Correlation.95%.Confidence`, 
-                       PlotProv = TRUE)
+                      DistDataVec = NEDisMat[-1,1], 
+                      LongRange = NEFt.Long.Range, 
+                      LatRange = NEFt.Lat.Range, 
+                      RangeSamp = NEFtR.Samp, 
+                      Verbose = FALSE, 
+                      Validate = FALSE, 
+                      PlotValCor = NEFtrThres$`Provenancing.Correlation.1%.Confidence`, 
+                      PlotProv = TRUE,
+                      Method = 'Spearman')
 points(x = NEFtInfo$Long[1], y=NEFtInfo$Lat[1], col='blue', pch=16)
 ```
 
@@ -275,14 +277,15 @@ In comparison if we increase the `RangeSamp` value such that a number of grid sq
 ``` {r Addressing potential issues with high precision datasets with examples from Fteydea 1}
 NEFtR.Samp <- c(15)
 IDbyDistanceDistInput(LatLongs = NEFtInfo[-1,2:3], 
-                       DistDataVec = NEDisMat[-1,1], 
-                       LongRange = NEFt.Long.Range, 
-                       LatRange = NEFt.Lat.Range, 
-                       RangeSamp = NEFtR.Samp, 
-                       Verbose = FALSE, 
-                       Validate = FALSE, 
-                       PlotValCor = NEFtrThres$`Provenancing.Correlation.95%.Confidence`, 
-                       PlotProv = TRUE)
+                      DistDataVec = NEDisMat[-1,1], 
+                      LongRange = NEFt.Long.Range, 
+                      LatRange = NEFt.Lat.Range, 
+                      RangeSamp = NEFtR.Samp, 
+                      Verbose = FALSE, 
+                      Validate = FALSE, 
+                      PlotValCor = NEFtrThres$`Provenancing.Correlation.95%.Confidence`, 
+                      PlotProv = TRUE,
+                      Method = 'Spearman')
 points(x = NEFtInfo$Long[1], y=NEFtInfo$Lat[1], col='blue', pch=16)
 ```
 
@@ -292,14 +295,15 @@ If we increase the grid sampling further the function provides a polygon of the 
 ``` {r Addressing potential issues with high precision datasets with examples from Fteydea 2}
 NEFtR.Samp <- c(25)
 IDbyDistanceDistInput(LatLongs = NEFtInfo[-1,2:3], 
-                       DistDataVec = NEDisMat[-1,1], 
-                       LongRange = NEFt.Long.Range, 
-                       LatRange = NEFt.Lat.Range, 
-                       RangeSamp = NEFtR.Samp, 
-                       Verbose = FALSE, 
-                       Validate = FALSE, 
-                       PlotValCor = NEFtrThres$`Provenancing.Correlation.95%.Confidence`, 
-                       PlotProv = TRUE)
+                      DistDataVec = NEDisMat[-1,1], 
+                      LongRange = NEFt.Long.Range, 
+                      LatRange = NEFt.Lat.Range, 
+                      RangeSamp = NEFtR.Samp, 
+                      Verbose = FALSE, 
+                      Validate = FALSE, 
+                      PlotValCor = NEFtrThres$`Provenancing.Correlation.95%.Confidence`, 
+                      PlotProv = TRUE,
+                      Method = 'Spearman')
 points(x = NEFtInfo$Long[1], y=NEFtInfo$Lat[1], col='blue', pch=16)
 ```
 
@@ -309,14 +313,15 @@ If we increase the grid sampling further again the function provides a more accu
 ``` {r Addressing potential issues with high precision datasets with examples from Fteydea 3}
 NEFtR.Samp <- c(45)
 IDbyDistanceDistInput(LatLongs = NEFtInfo[-1,2:3], 
-                       DistDataVec = NEDisMat[-1,1], 
-                       LongRange = NEFt.Long.Range, 
-                       LatRange = NEFt.Lat.Range, 
-                       RangeSamp = NEFtR.Samp, 
-                       Verbose = FALSE, 
-                       Validate = FALSE, 
-                       PlotValCor = NEFtrThres$`Provenancing.Correlation.95%.Confidence`, 
-                       PlotProv = TRUE)
+                      DistDataVec = NEDisMat[-1,1], 
+                      LongRange = NEFt.Long.Range, 
+                      LatRange = NEFt.Lat.Range, 
+                      RangeSamp = NEFtR.Samp, 
+                      Verbose = FALSE, 
+                      Validate = FALSE, 
+                      PlotValCor = NEFtrThres$`Provenancing.Correlation.95%.Confidence`, 
+                      PlotProv = TRUE,
+                      Method = 'Spearman')
 points(x = NEFtInfo$Long[1], y=NEFtInfo$Lat[1], col='blue', pch=16)
 ```
 
@@ -336,7 +341,9 @@ NEFt.Boundaryfinding <- BoundaryFinder(LatLongs = NEFtInfo[,2:3],
                                        RangeSamp = NEFtR.Samp, 
                                        PlotValCor = NEFtrThres$`Provenancing.Correlation.95%.Confidence`,
                                        RefIDs = NEFtInfo$ID,
-                                       IgnorePrompts = TRUE)
+                                       IgnorePrompts = TRUE,
+                                       Method = 'Spearman')
+                                       
 ```
 
 
@@ -352,5 +359,6 @@ NEFt.MidRes.Boundaryfinding <- BoundaryFinder(LatLongs = NEFtInfo[,2:3],
                                               RangeSamp = NEFtR.Samp, 
                                               PlotValCor = NEFtrThres$`Provenancing.Correlation.95%.Confidence`,
                                               RefIDs = NEFtInfo$ID,
-                                              IgnorePrompts = TRUE)
+                                              IgnorePrompts = TRUE,
+                                              Method = 'Spearman')
 ```
