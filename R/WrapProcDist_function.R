@@ -23,7 +23,6 @@
 
 
 ProcDistanceTable <- function(A){
-  #A <- GPA$coords
 
   StartTime <- Sys.time()
 
@@ -76,7 +75,6 @@ ProcDistanceTable <- function(A){
 
 
 ProcDistanceTablePar <- function(A){
-  #A <- Rpraetor$LMs
 
 
   Res <- matrix(0, nrow = dim(A)[3], ncol = dim(A)[3])

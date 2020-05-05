@@ -62,9 +62,6 @@
 
 
 IDbyDistanceDistInput <- function(LatLongs, DistDataVec, LongRange, LatRange, RangeSamp=10, Verbose=TRUE, PrintProg=FALSE, Validate= FALSE, ValidLatLongs, PlotRes=TRUE, HeatHue= c(.15, 1), TileSize=2, PlotProv=FALSE, PlotValCor, Method=c('Pearson', 'Spearman')){
-  #LatLongs = cbind(RatLatLongData$Lat, RatLatLongData$Long)[-1,]; DistDataVec = RatDistMat[-1,1]; LongRange = Long.Range; LatRange = Lat.Range; RangeSamp = R.Samp; Verbose = FALSE; Validate = FALSE
-  #LatLongs = NEFtInfo[-1,2:3]; DistDataVec = NEDisMat[-1,1]; LongRange = NEFt.Long.Range; LatRange = NEFt.Lat.Range; RangeSamp = NEFtR.Samp; Verbose = FALSE; Validate = FALSE; PlotValCor = NEFtrThres$`Provenancing.Correlation.95%.Confidence`; PlotProv = TRUE
-  #LatLongs = RpraetorLatLong; DistDataVec = RatDistMat[-1,1]; LongRange = Long.Range; LatRange = Lat.Range; RangeSamp = R.Samp; Verbose = FALSE; Validate = FALSE; PlotValCor = rThres$`Provenancing.Correlation.95%.Confidence`; PlotProv = TRUE
 
   #making LatLongs a dataframe
   LatLongs <- as.data.frame(LatLongs)
@@ -293,7 +290,6 @@ IDbyDistanceDistInput <- function(LatLongs, DistDataVec, LongRange, LatRange, Ra
 
 
 IDbyDistanceDistInputCCV <- function(LatLongs, DistDataMat, Verbose=TRUE, PrintProg=TRUE, ProvConfidence=0.95, Method=c('Pearson', 'Spearman')){
-  #LatLongs = Rpraetor$Lat.Long; DistDataMat = RatDistMat; Verbose = TRUE; ProvConfidence = .95; PrintProg = FALSE
 
   #making LatLongs a dataframe
   LatLongs <- as.data.frame(LatLongs)

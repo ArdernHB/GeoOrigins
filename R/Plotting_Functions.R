@@ -29,7 +29,7 @@ transpar<-function(Colour, alpha=100){
 #' @import ks
 
 Construct_contour <- function(LatLongs) {
-  #LatLongs = as.data.frame(CoordsHeat)
+
   x <-  cbind(chr2nu(LatLongs$Longs), chr2nu(LatLongs$Lats))
   KSres <- ks::kde(x=x, H=ks::Hpi(x=x), compute.cont=TRUE)
   contour.95 <- with(KSres, grDevices::contourLines(x=eval.points[[1]],y=eval.points[[2]],z=estimate,levels=cont["5%"])[[1]])

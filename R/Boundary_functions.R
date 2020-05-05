@@ -79,13 +79,7 @@
 
 
 BoundaryFinder <- function(LatLongs, RefDistMat=matrix(), LongRange, LatRange, RangeSamp=10, PrintProg=TRUE, PlotValCor, ExpandMap=c(0,0), DataDump=TRUE, DataDumpPath=NA, StartPoint=1, RefIDs=NULL, IgnorePrompts=FALSE, Method=c('Pearson', 'Spearman')){
-  #R.Samp=c(7,20)
-  #LatLongs = cbind(Rpraetor$Lat.Long$Lat, Rpraetor$Lat.Long$Long); RefDistMat = RatDistMat;LongRange = Long.Range; LatRange = Lat.Range; RangeSamp = R.Samp; PlotValCor = rThres$`Provenancing.Correlation.95%.Confidence`; ExpandMap = c(0,0); RefIDs = rownames(Rpraetor$Lat.Long); DataDump = FALSE; IgnorePrompts=FALSE
-  #LatLongs = NEFtInfo[,2:3]; RefDistMat = NEDisMat; DataDump = FALSE; LongRange = NEFt.Long.Range; LatRange = NEFt.Lat.Range; RangeSamp = NEFtR.Samp; PlotValCor = NEFtrThres$`Provenancing.Correlation.95%.Confidence`;RefIDs = NEFtInfo$ID
-  #DataDumpPath='C:/Users/Arder/Desktop/'
-  #LatLongs = NEFtInfo[,2:3]; RefDistMat = NEDisMat;  DataDump = FALSE;  LongRange = NEFt.Long.Range;  LatRange = NEFt.Lat.Range;  RangeSamp = NEFtR.Samp;  PlotValCor = NEFtrThres$`Provenancing.Correlation.95%.Confidence`;  RefIDs = NEFtInfo$ID;  IgnorePrompts = TRUE
 
-  #DataDump=TRUE
   if (IgnorePrompts==FALSE){
     if (DataDump==TRUE){
       if (is.na(DataDumpPath)){
@@ -553,8 +547,6 @@ BoundaryCalculation <- function(MapMatrix, PlotValCor){
 
 
 PlotBoundaries <- function(PlotValCor, DataDump=TRUE, Path=NA, RawCorArray=NA , MapLinesWd=1, TileSize=4, plotLong, plotLat, MapExpansion=c(0,0), LatLongs, RefPchCol='blue',  RefPchSize=1, BoundaryHue = c(1,1)){
-  #PlotValCor = rThres$`Provenancing.Correlation.95%.Confidence`; RawCorArray = Boundaryfinding$RawCorData; plotLong = colnames(Boundaryfinding$RawCorData); plotLat = rownames(Boundaryfinding$RawCorData); LatLongs= cbind(RatLatLongData$Lat, RatLatLongData$Long)
-  #DataDump=FALSE
 
   colnames(LatLongs) <- c('Lats', 'Longs')
   LatLongs <- as.data.frame(LatLongs)
@@ -670,9 +662,6 @@ PlotBoundaries <- function(PlotValCor, DataDump=TRUE, Path=NA, RawCorArray=NA , 
 
 
 TraitBoundaryStats <- function(RawCorArray, LatLongs, RefIDs, PlotValCor){
-  #RawCorArray=BoundaryfindingStep$RawCorData ; LatLongs = Rpraetor$Lat.Long; RefIDs = rownames(Rpraetor$Lat.Long); PlotValCor = rThresTestStep$`Provenancing.Correlation.95%.Confidence`
-
-  #RawCorArray = BoundaryfindingStep$RawCorData; LatLongs = Rpraetor$Lat.Long; RefIDs = rownames(Rpraetor$Lat.Long);PlotValCor =  rThresTestStep$`Provenancing.Correlation.95%.Confidence`
 
   SpecimenLoc <- cbind(chr2nu(LatLongs$Long), chr2nu(LatLongs$Lat))
   DistPol <-  sp::Polygon(SpecimenLoc[grDevices::chull(SpecimenLoc),])

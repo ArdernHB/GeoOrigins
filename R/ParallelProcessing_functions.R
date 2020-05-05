@@ -37,6 +37,8 @@
 
 
 IDbyDistanceDistInputPar <- function(LatLongsPar, DistDataVecPar, LongRangePar, LatRangePar, RangeSamp=10, MethodPar=c('Spearman', 'Pearson')){
+
+
   #making LatLongs a dataframe
   LatLongsPar <- as.data.frame(LatLongsPar)
   colnames(LatLongsPar) <- c("Lats", "Longs")
@@ -145,10 +147,6 @@ IDbyDistanceDistInputPar <- function(LatLongsPar, DistDataVecPar, LongRangePar, 
 
 
 IDbyDistanceDistInputCCVPar <- function(LatLongs, DistDataMat, Verbose=TRUE, ProvConfidence=0.95, Method=c('Spearman', 'Pearson')){
-  #LatLongs=RatLatLong; DistDataMat = TestRat$ProcDistTable; Verbose = TRUE; ProvConfidence = .95
-  #LatLongs = cbind(Marvalis$Info$Lat[OrkMar], Marvalis$Info$Long[OrkMar]); RefDistMat = DimTestDist; Verbose = FALSE; ProvConfidence = .95
-  #LatLongs = Marvalis$Info[,3:4]; DistDataMat = Marvalis$Proc.Dist; Verbose =  TRUE; ProvConfidence =  .95; Method='Spearman'
-
 
   #making LatLongs a dataframe
   LatLongs <- as.data.frame(LatLongs)
@@ -365,10 +363,6 @@ IDbyDistanceRawDataCCVPar <- function(LatLongs, RefData, ShapeData=TRUE, ShapeDi
 
 
 BoundaryFinderPar <- function(LatLongs, RefDistMat=matrix(), LongRange, LatRange, RangeSamp=10, ExpandMap=c(0,0), StartPoint=1, RefIDs=NULL, IgnorePrompts=FALSE, Method = c('Spearman', 'Pearson')){
-  #LatLongs = Rpraetor$Lat.Long; RefDistMat = RatDistMat;LongRange = range(Rpraetor$Lat.Long$Long); LatRange = range(Rpraetor$Lat.Long$Lat); RangeSamp = c(20,10); PlotValCor = rThres$`Provenancing.Correlation.95%.Confidence`; ExpandMap = c(0,0); RefIDs = 1:dim(Rpraetor$LMs)[3]; DataDump = FALSE
-  #ExpandMap=c(0,0); DataDump=TRUE; DataDumpPath=NA; StartPoint=1; RefIDs=NULL; IgnorePrompts=FALSE
-  #LatLongs = Rpraetor$Lat.Long;RefDistMat = StepDimTestDist;LongRange = Long.Range;LatRange = Lat.Range;RangeSamp = LowResRsamp.Rp;ExpandMap = c(0,0);RefIDs = rownames(Rpraetor$Lat.Long);IgnorePrompts = TRUE;StartPoint=1
-  #LatLongs = Marvalis$Info[-Examine,3:4];  RefDistMat = Marvalis$Proc.Dist;  LongRange = Long.Range;  LatRange = Lat.Range;  RangeSamp = R.Samp;  Method = 'Spearman'; ExpandMap = .5; RefIDs = rownames(Marvalis$Info)
 
 
   #making LatLongs a dataframe
@@ -550,7 +544,6 @@ BoundaryFinderPar <- function(LatLongs, RefDistMat=matrix(), LongRange, LatRange
 
 
 TraitBoundaryStatsPar <- function(RawCorArray, LatLongs, RefIDs, PlotValCor){
-  #RawCorArray=BoundaryfindingStep$RawCorData ; LatLongs = Rpraetor$Lat.Long; RefIDs = rownames(Rpraetor$Lat.Long); PlotValCor = rThresTestStep$`Provenancing.Correlation.95%.Confidence`
 
 
   SpecimenLoc <- cbind(chr2nu(LatLongs$Long), chr2nu(LatLongs$Lat))
