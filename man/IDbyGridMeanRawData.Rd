@@ -52,7 +52,7 @@ IDbyGridMeanRawData(
 
 \item{TileSize}{numeric to dictate the pixel size of the heat mapping colour values.}
 
-\item{IgnorePrompts}{default is set to FALSE, but if set to TRUE queries such as those confirming the location of the datadump will be surpressed.}
+\item{IgnorePrompts}{default is set to FALSE, but if set to TRUE queries such as those confirming the location of the datadump will be suppressed.}
 
 \item{PlotProv}{logical if the map should be printed with a polygon demarking a contour at a user defined correlation value.}
 }
@@ -123,8 +123,3 @@ table(GridIDRes[,5])/length(GridIDRes[,5])
 \author{
 Ardern Hulme-Beaman
 }
-\keyword{Nearest}
-\keyword{Spatial}
-\keyword{identification}
-\keyword{neighbour}
-\keyword{provenancing}
