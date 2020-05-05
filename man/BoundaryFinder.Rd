@@ -24,7 +24,7 @@ BoundaryFinder(
 \arguments{
 \item{LatLongs}{a matrix of n rows by 2 columns where n is the number of reference specimens in your dataset and the columns are Latitude and Longitude values in that order. These latitude-longitude coordinates should be of the locations of the reference specimens.}
 
-\item{RefDistMat}{is a square matrix of pairwise distances among all reference specimens}
+\item{RefDistMat}{is a square matrix of pairwise distances among all reference specimens.}
 
 \item{LongRange}{is a vector of 2 elements defining the maximum and minimum Longitude values that the provenancing method should explore. This will also define the mapping range in the final plotted output.}
 
@@ -42,11 +42,11 @@ BoundaryFinder(
 
 \item{DataDumpPath}{is a directory path indicating where the data for constructing the boundaries can be dumped.}
 
-\item{StartPoint}{is an iteger that denotes the specimen to start the process on. As the method needs to cycle through all known specimens in the database, this can take some time. If the process is stopped for whatever reason the process can be picked up again by adjusting the StartPoint to the specimen number that it had previously finished on.}
+\item{StartPoint}{is an iteger that denotes the specimen to start the process on. As the method needs to cycle through all known specimens in the database, this can take some time. If the process is stopped for whatever reason the process can be picked up again by adjusting the \code{StartPoint} to the specimen number that it had previously finished on.}
 
-\item{RefIDs}{is a vector of the unique identifiers for each of the reference specimens in the reference dataset. These values will be used for naming the files in the datadump fololder and also for matching up with the returned summary results. Default is set to NULL and if this is not populated then reference data is worked through consecutively, naming the datadump files in consecutive order.}
+\item{RefIDs}{is a vector of the unique identifiers for each of the reference specimens in the reference dataset. These values will be used for naming the files in the datadump folder and also for matching up with the returned summary results. Default is set to NULL and if this is not populated then reference data is worked through consecutively, naming the datadump files in consecutive order.}
 
-\item{IgnorePrompts}{default is set to FALSE, but if set to TRUE queries such as those confirming the location of the datadump will be surpressed.}
+\item{IgnorePrompts}{default is set to FALSE, but if set to TRUE queries such as those confirming the location of the datadump will be suppressed.}
 
 \item{Method}{determines what kind of correlation coefficient should be used, either "Spearman" or "Pearson". Spearman's ranked correlation coefficient does not assume a linear relationship between geographic and trait distances, whereas Pearson's coefficient does.}
 }

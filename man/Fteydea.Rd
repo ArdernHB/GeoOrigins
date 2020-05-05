@@ -9,8 +9,8 @@ A list of 4 objects:
 \describe{
   \item{Info}{Specimen information for \emph{F. teydea} dataset in the form of a data.frame with 3 columns (ID, Lat, Long) and 116 rows.}
   \item{SongDisMat}{Square distance matrix with pairwise dynamic time-warping distance between all 116 \emph{F. teydea} specimens.}
-  \item{Total.Boundary}{A list including a dataframe with provenancing area (in m2) and an array of trait boundary finding correlation values for all 116 Tenerifian specimens for inputting into the \code{PlotBoundaries} function. This is provided as an example because the \code{BoundaryFinder} function can take a long time to compute.}
-  \item{NESubRegion.Boundary}{A list including a dataframe with provenancing area (in m2) and an array of trait boundary finding correlation values for all 29 NE subregion specimens for inputting into the \code{PlotBoundaries} function. This is provided as an example because the \code{BoundaryFinder} function can take a long time to compute.}
+  \item{Total.Boundary}{A list including a dataframe with provenancing area (in m2) and an array of trait boundary finding correlation values using Spearman's method for all 116 Tenerifian specimens for inputting into the \code{PlotBoundaries} function. This is provided as an example because the \code{BoundaryFinder} function can take a long time to compute.}
+  \item{NESubRegion.Boundary}{A list including a dataframe with provenancing area (in m2) and an array of trait boundary finding correlation values using Spearman's method for all 29 NE subregion specimens for inputting into the \code{PlotBoundaries} function. This is provided as an example because the \code{BoundaryFinder} function can take a long time to compute.}
 }
 }
 \usage{

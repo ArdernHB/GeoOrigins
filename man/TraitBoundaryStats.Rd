@@ -11,7 +11,7 @@ TraitBoundaryStats(RawCorArray, LatLongs, RefIDs, PlotValCor)
 
 \item{LatLongs}{a matrix of n rows by 2 columns where n is the number of reference specimens in your dataset and the columns are Latitude and Longitude values in that order. These latitude-longitude coordinates should be of the locations of the reference specimens.}
 
-\item{RefIDs}{is a vector of the unique identifiers for each of the reference specimens in the reference dataset. These values will be used for naming the files in the datadump fololder and also for matching up with the returned summary results. Default is set to NULL and if this is not populated then reference data is worked through consecutively, naming the datadump files in consecutive order.}
+\item{RefIDs}{is a vector of the unique identifiers for each of the reference specimens in the reference dataset. These values will be used for naming the files in the datadump folder and also for matching up with the returned summary results. Default is set to NULL and if this is not populated then reference data is worked through consecutively, naming the datadump files in consecutive order.}
 
 \item{PlotValCor}{numeric correlation value that is used to determine the most likely origin of the specimen. This value can be calculated by using the correct cross-validation method and identifying the correlation value that will correctly identify a desired percentage of specimens (e.g. 95\%).}
 }
