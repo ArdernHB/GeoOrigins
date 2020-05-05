@@ -2,7 +2,7 @@
 % Please edit documentation in R/InternalSimpleClass_function.R
 \name{Mat2Array}
 \alias{Mat2Array}
-\title{Internal function for conversion of a matrix of landmarks to an array}
+\title{Simple function for conversion of a matrix of landmarks to an array}
 \usage{
 Mat2Array(Mat, LMdim)
 }
@@ -22,4 +22,5 @@ array where rows are landmarks and columns correspond with the dimensions.
 \author{
 Ardern Hulme-Beaman
 }
-\keyword{internal}
+\keyword{data}
+\keyword{format}

@@ -2,7 +2,7 @@
 % Please edit documentation in R/InternalSimpleClass_function.R
 \name{Array2Mat}
 \alias{Array2Mat}
-\title{Internal function for conversion of an array to a matrix}
+\title{Simple function for conversion of an array to a matrix}
 \usage{
 Array2Mat(Array)
 }
@@ -20,4 +20,5 @@ specimens and columns are alternating landmark variables
 \author{
 Ardern Hulme-Beaman
 }
-\keyword{internal}
+\keyword{data}
+\keyword{format}
