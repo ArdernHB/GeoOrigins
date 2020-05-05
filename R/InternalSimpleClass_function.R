@@ -23,7 +23,7 @@ chr2nu <- function(X){as.numeric(as.character(X))}
 
 
 
-#' Internal function for conversion of a matrix of landmarks to an array
+#' Simple function for conversion of a matrix of landmarks to an array
 #'
 #' This function takes a matrix where rows are specimens and columns are
 #' alternating landmark coordinate values and converts it to a 3 dimensional
@@ -35,7 +35,7 @@ chr2nu <- function(X){as.numeric(as.character(X))}
 #' @param Mat is a matrix of landmark data
 #' @param LMdim is the number of dimensions of the data, either 2 or 3
 #'
-#' @keywords internal
+#' @keywords data format
 #' @author Ardern Hulme-Beaman
 #' @export
 
@@ -57,7 +57,7 @@ Mat2Array <- function(Mat, LMdim){
 
 
 
-#' Internal function for conversion of an array to a matrix
+#' Simple function for conversion of an array to a matrix
 #'
 #' This function takes an array and converts it to a matrix where rows
 #' specimens and columns are alternating landmark variables
@@ -68,7 +68,7 @@ Mat2Array <- function(Mat, LMdim){
 #'
 #' @param Array is an array of landmark data
 #'
-#' @keywords internal
+#' @keywords data format
 #' @author Ardern Hulme-Beaman
 #' @export
 
@@ -83,6 +83,17 @@ Array2Mat <- function(Array){
 }
 
 
+
+#' Internal function for assessment of user input
+#'
+#' This function assesses whether user inputs are as expected and it not
+#' the function throws an error
+#'
+#' @inheritParams GeoDist2Point
+#' @inheritParams IDbyDistanceRawData
+#' @inheritParams BoundaryFinder
+#'
+#' @author Ardern Hulme-Beaman
 
 
 
