@@ -45,26 +45,26 @@
 #'
 #' GridIDRes <- NULL
 #'
-#' for (i in 1:dim(RpraetorDataMat)[1]){
+#' #for (i in 1:dim(RpraetorDataMat)[1]){
 #'
 #'
-#' iRes <- IDbyGridMeanRawData(LatLongs = Rpraetor$Lat.Long[-i,],
-#'                          TargetData = RpraetorDataMat[i,],
-#'                          RefData = RpraetorDataMat[-i,],
-#'                          ShapeData = TRUE,
-#'                          ShapeDim = 2,
-#'                          LongRange = Long.Range,
-#'                          LatRange = Lat.Range,
-#'                          RangeSamp = R.Samp,
-#'                          Validate = TRUE,
-#'                          ValidLatLongs = Rpraetor$Lat.Long[i,],
-#'                          IgnorePrompts = TRUE,
-#'                          PlotProv = FALSE)
+#' #iRes <- IDbyGridMeanRawData(LatLongs = Rpraetor$Lat.Long[-i,],
+#'  #                        TargetData = RpraetorDataMat[i,],
+#'  #                        RefData = RpraetorDataMat[-i,],
+#'  #                        ShapeData = TRUE,
+#'  #                        ShapeDim = 2,
+#'  #                        LongRange = Long.Range,
+#'  #                        LatRange = Lat.Range,
+#'  #                        RangeSamp = R.Samp,
+#'  #                        Validate = TRUE,
+#'  #                        ValidLatLongs = Rpraetor$Lat.Long[i,],
+#'  #                        IgnorePrompts = TRUE,
+#'  #                        PlotProv = FALSE)
 #'
-#'   GridIDRes <- rbind(GridIDRes, c(as.matrix(iRes)[1,], dim(iRes)[1]))
-#' }
+#'   #GridIDRes <- rbind(GridIDRes, c(as.matrix(iRes)[1,], dim(iRes)[1]))
+#' #}
 #'
-#' table(GridIDRes[,5])/length(GridIDRes[,5])
+#' #table(GridIDRes[,5])/length(GridIDRes[,5])
 #'
 
 IDbyGridMeanRawData <- function(LatLongs, TargetData, RefData, ShapeData=TRUE, ShapeDim=2, LongRange=c(0,0), LatRange=c(0,0), ExpandMap=c(0,0), RangeSamp=10, PrintProg=FALSE, Validate=FALSE, ValidLatLongs, HeatHue= c(.15, 1), TileSize=2, IgnorePrompts=FALSE, PlotProv=TRUE){
