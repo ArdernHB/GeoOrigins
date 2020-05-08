@@ -25,7 +25,7 @@ GeoOrigins: Trait mapping and geographic provenancing of specimens without categ
 
 This vignette walks the reader through the GeoOrigins package using three published datasets. The goal of this vignette is accompany the first manuscript written on this method and also provide the user with the code and tools to use this packages main functionality. The main goal of the method is to provenance specimens of unknown origin to their most likely location of origin without using a priori defined groups. The methods secondary function is to use the leave-one-out correct cross validation procedure to identify trait boundaries.
 
-The vignette is split into three sections to outline the methods and code used to generate the results in the accompanying paper for each of the three datasets used there.
+The vignette is split into three sections to outline the methods and code used to generate the results in the accompanying paper for each of the three datasets used there. The accompanying paper with this method presents the results generated with Pearson's r, the examples here are set to present the results generated with Spearman's rho for comparison.
 
 *Rattus praetor* the geographic structure of the dental morphology of the Large spiny rat of New Guinea
 -------------------------------------------------------------------------------------------------------
