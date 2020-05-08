@@ -545,7 +545,6 @@ BoundaryFinderPar <- function(LatLongs, RefDistMat=matrix(), LongRange, LatRange
 
 TraitBoundaryStatsPar <- function(RawCorArray, LatLongs, RefIDs, PlotValCor){
 
-
   SpecimenLoc <- cbind(chr2nu(LatLongs$Long), chr2nu(LatLongs$Lat))
   DistPol <-  sp::Polygon(SpecimenLoc[grDevices::chull(SpecimenLoc),])
   DistPols <-  sp::Polygons(list(DistPol),1)
