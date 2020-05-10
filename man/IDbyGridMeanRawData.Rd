@@ -98,7 +98,7 @@ R.Samp <- c(7,15)
 
 GridIDRes <- NULL
 
-for (i in 1:dim(RpraetorDataMat)[1]){
+#for (i in 1:dim(RpraetorDataMat)[1]){
 
 
 #iRes <- IDbyGridMeanRawData(LatLongs = Rpraetor$Lat.Long[-i,],
@@ -114,10 +114,10 @@ for (i in 1:dim(RpraetorDataMat)[1]){
  #                        IgnorePrompts = TRUE,
  #                        PlotProv = FALSE)
 
-  GridIDRes <- rbind(GridIDRes, c(as.matrix(iRes)[1,], dim(iRes)[1]))
-}
+  #GridIDRes <- rbind(GridIDRes, c(as.matrix(iRes)[1,], dim(iRes)[1]))
+#}
 
-table(GridIDRes[,5])/length(GridIDRes[,5])
+#table(GridIDRes[,5])/length(GridIDRes[,5])
 
 }
 \author{
