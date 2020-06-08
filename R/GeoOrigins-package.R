@@ -11,8 +11,6 @@
 #'
 #' Array2Mat
 #'
-#' BoundaryCalculation
-#'
 #' BoundaryFinder
 #'
 #' BoundaryFinderPar
