@@ -25,8 +25,6 @@
 #' @details This method also makes use of the \code{\link[stats]{cor.test}} function from the \code{stats} package. When the \code{PrintProg} is set to TRUE, the \code{\link[svMisc]{progress}} function of the \code{svMisc} package is used.
 #' The map plotting of this function makes use of the functions of the \code{maps} package.
 #'
-#' @keywords Spatial provenancing
-#' @keywords Spatial identification
 #' @keywords internal
 #'
 #' @import doParallel

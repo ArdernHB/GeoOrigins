@@ -37,8 +37,6 @@
 #' Robert J. Hijmans (2016). raster: Geographic Data Analysis and Modeling. R package version 2.5-8.
 #' https://CRAN.R-project.org/package=raster
 #'
-#' @keywords Spatial provenancing
-#' @keywords Spatial identification
 #' @author Ardern Hulme-Beaman
 #'
 #' @examples
@@ -528,9 +526,6 @@ BoundaryCalculation <- function(MapMatrix, PlotValCor){
 #' Enhancements by Thomas P Minka and Alex Deckmyn. (2017). maps: Draw Geographical Maps. R
 #' package version 3.2.0. https://CRAN.R-project.org/package=maps
 #'
-#' @keywords Spatial provenancing
-#' @keywords Boundary finder
-#' @keywords Boundary plotting
 #' @author Ardern Hulme-Beaman
 #' @examples
 #' FteydeaThres <- IDbyDistanceDistInputCCV(LatLongs = Fteydea$Info[,2:3],
@@ -647,8 +642,6 @@ PlotBoundaries <- function(PlotValCor, DataDump=TRUE, Path=NA, RawCorArray=NA , 
 #' @return This function returns a list of two objects: 1. the area of the convex hull of the distribution of samples and 2. a dataframe of two columns with the area returned of reach specimen in the identification process and the corresponding percentage that area represents of the sample distribution.
 #'
 #'
-#' @keywords Spatial provenancing
-#' @keywords Boundary finder
 #' @author Ardern Hulme-Beaman
 #' @examples
 #' FteydeaThres <- IDbyDistanceDistInputCCV(LatLongs = Fteydea$Info[,2:3],

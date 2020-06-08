@@ -14,8 +14,6 @@
 #' https://CRAN.R-project.org/package=geosphere
 #'
 #' @keywords internal
-#' @keywords geographic distance
-#' @keywords Haversine distance
 #' @author Ardern Hulme-Beaman
 #' @import geosphere
 
@@ -42,8 +40,6 @@ GeoDist2Point <- function(RefLatLongs, TargetLatLong){
 #' Robert J. Hijmans (2017). geosphere: Spherical Trigonometry. R package version 1.5-7.
 #' https://CRAN.R-project.org/package=geosphere
 #'
-#' @keywords geographic distances
-#' @keywords Haversine distances
 #' @author Ardern Hulme-Beaman
 #' @import geosphere
 

@@ -90,8 +90,6 @@
 #'
 #' points(x = Rpraetor$Lat.Long$Long[1], y=Rpraetor$Lat.Long$Lat[1], col='blue', pch=16)
 #'
-#' @keywords Spatial provenancing
-#' @keywords Spatial identification
 #' @export
 #'
 #'

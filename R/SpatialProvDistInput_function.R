@@ -55,8 +55,7 @@
 #'                    PlotProv = TRUE,
 #'                    Method = 'Spearman')
 #'
-#' @keywords Spatial provenancing
-#' @keywords Spatial identification
+#'
 #' @author Ardern Hulme-Beaman
 #' @export
 

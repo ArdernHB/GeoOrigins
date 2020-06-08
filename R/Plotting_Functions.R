@@ -6,8 +6,6 @@
 #' @param alpha The level of transparency from 1 (completely transparent) to 100 (completely opaque) that the returned colour should be.
 #' @return The transparent equivalent of a named colour
 #' @keywords internal
-#' @keywords colour
-#' @keywords transparency
 #' @author Ardern Hulme-Beaman
 
 
@@ -25,7 +23,6 @@ transpar<-function(Colour, alpha=100){
 #' @author Anna Rudzinski
 #' @author Ardern Hulme-Beaman
 #' @keywords internal
-#' @keywords contour
 #' @import ks
 
 Construct_contour <- function(LatLongs) {
