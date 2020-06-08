@@ -451,9 +451,9 @@ BoundaryFinder <- function(LatLongs, RefDistMat=matrix(), LongRange, LatRange, R
 #' @param MapMatrix a matrix of correlation values that correspond to grid reference locations
 #' @inheritParams IDbyDistanceDistInput
 #'
-#' @keywords Spatial provenancing; Boundary finder; internal
+#' @keywords internal
 #' @author Ardern Hulme-Beaman
-#' @export
+
 
 
 BoundaryCalculation <- function(MapMatrix, PlotValCor){
