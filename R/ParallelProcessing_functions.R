@@ -38,6 +38,7 @@
 
 IDbyDistanceDistInputPar <- function(LatLongsPar, DistDataVecPar, LongRangePar, LatRangePar, RangeSamp=10, MethodPar=c('Spearman', 'Pearson')){
 
+  UserInputAssessment(LatLongs=LatLongsPar, DistVec = DistDataVecPar, LongRange=LongRangePar, LatRange=LatRangePar, RangeSamp, Method, RefDistMat = NA, RefData = NA)
 
   #making LatLongs a dataframe
   LatLongsPar <- as.data.frame(LatLongsPar)
@@ -148,6 +149,9 @@ IDbyDistanceDistInputPar <- function(LatLongsPar, DistDataVecPar, LongRangePar, 
 
 IDbyDistanceDistInputCCVPar <- function(LatLongs, DistDataMat, Verbose=TRUE, ProvConfidence=0.95, Method=c('Spearman', 'Pearson')){
 
+  UserInputAssessment(LatLongs, RefDistMat=DistDataMat, LongRange=NA, LatRange=NA, RangeSamp=NA, Method, RefData = NA, DistVec = NA)
+
+
   #making LatLongs a dataframe
   LatLongs <- as.data.frame(LatLongs)
   colnames(LatLongs) <- c("Lats", "Longs")
@@ -248,6 +252,9 @@ IDbyDistanceDistInputCCVPar <- function(LatLongs, DistDataMat, Verbose=TRUE, Pro
 
 
 IDbyDistanceRawDataCCVPar <- function(LatLongs, RefData, ShapeData=TRUE, ShapeDim=2, DistMethod=c("Euc", "Proc"), Verbose=TRUE, ProvConfidence=0.95, Method=c('Pearson', 'Spearman')){
+
+  UserInputAssessment(LatLongs, RefData, LongRange=NA, LatRange=NA, RangeSamp=NA, Method, RefDistMat = NA, DistVec = NA)
+
 
   #making LatLongs a dataframe
   LatLongs <- as.data.frame(LatLongs)
@@ -356,13 +363,13 @@ IDbyDistanceRawDataCCVPar <- function(LatLongs, RefData, ShapeData=TRUE, ShapeDi
 #' @import parallel
 #' @import foreach
 #'
-#' @keywords Spatial boundary
-#' @keywords Spatial cluster
 #' @author Ardern Hulme-Beaman
 #' @export
 
 
 BoundaryFinderPar <- function(LatLongs, RefDistMat=matrix(), LongRange, LatRange, RangeSamp=10, ExpandMap=c(0,0), StartPoint=1, RefIDs=NULL, IgnorePrompts=FALSE, Method = c('Spearman', 'Pearson')){
+
+  UserInputAssessment(LatLongs, RefDistMat, LongRange, LatRange, RangeSamp, Method, RefData = NA, DistVec = NA)
 
 
   #making LatLongs a dataframe
@@ -523,9 +530,6 @@ BoundaryFinderPar <- function(LatLongs, RefDistMat=matrix(), LongRange, LatRange
 #'
 #' @return This function returns a list of two objects: 1. the area of the convex hull of the distribution of samples and 2. a dataframe of two columns with the area returned of reach specimen in the identification process and the corresponding percentage that area represents of the sample distribution.
 #'
-#'
-#' @keywords Spatial provenancing
-#' @keywords Boundary finder
 #' @author Ardern Hulme-Beaman
 #' @examples
 #' FteydeaThres <- IDbyDistanceDistInputCCV(LatLongs = Fteydea$Info[,2:3],

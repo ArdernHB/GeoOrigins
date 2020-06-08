@@ -63,6 +63,10 @@
 
 IDbyDistanceDistInput <- function(LatLongs, DistDataVec, LongRange, LatRange, RangeSamp=10, Verbose=TRUE, PrintProg=FALSE, Validate= FALSE, ValidLatLongs, PlotRes=TRUE, HeatHue= c(.15, 1), TileSize=2, PlotProv=FALSE, PlotValCor, Method=c('Pearson', 'Spearman')){
 
+
+  UserInputAssessment(LatLongs, RefData = NA, RefDistMat = NA, DistVec = DistDataVec, LongRange, LatRange, RangeSamp, Method)
+
+
   #making LatLongs a dataframe
   LatLongs <- as.data.frame(LatLongs)
   colnames(LatLongs) <- c("Lats", "Longs")
@@ -290,6 +294,8 @@ IDbyDistanceDistInput <- function(LatLongs, DistDataVec, LongRange, LatRange, Ra
 
 
 IDbyDistanceDistInputCCV <- function(LatLongs, DistDataMat, Verbose=TRUE, PrintProg=TRUE, ProvConfidence=0.95, Method=c('Pearson', 'Spearman')){
+
+  UserInputAssessment(LatLongs, RefData = NA, DistVec = NA, RefDistMat = DistDataMat, LongRange=NA, LatRange=NA, RangeSamp=NA, Method)
 
   #making LatLongs a dataframe
   LatLongs <- as.data.frame(LatLongs)

@@ -35,7 +35,6 @@ chr2nu <- function(X){as.numeric(as.character(X))}
 #' @param Mat is a matrix of landmark data
 #' @param LMdim is the number of dimensions of the data, either 2 or 3
 #'
-#' @keywords data format
 #' @author Ardern Hulme-Beaman
 #' @export
 
@@ -68,7 +67,6 @@ Mat2Array <- function(Mat, LMdim){
 #'
 #' @param Array is an array of landmark data
 #'
-#' @keywords data format
 #' @author Ardern Hulme-Beaman
 #' @export
 
@@ -93,22 +91,42 @@ Array2Mat <- function(Array){
 #' @inheritParams IDbyDistanceRawData
 #' @inheritParams BoundaryFinder
 #'
+#' @keywords internal
+#'
 #' @author Ardern Hulme-Beaman
 
 
 
 
-UserInputAssessment <- function(LatLongs, RefDistMat=NA, TargetData=NA, LongRange, LatRange, RangeSamp, Method){
+UserInputAssessment <- function(LatLongs, RefDistMat=NA, RefData=NA, DistVec=NA, LongRange, LatRange, RangeSamp, Method){
 
-  if (!(is.na(RefDistMat))){
+  if (!(is.na(RefDistMat) && length(RefDistMat)==1)){
     if (dim(LatLongs)[1]!=dim(RefDistMat)[1]){
       stop('Error: the number of latitude and longitude coordinates you have provided do not match the number of specimens in the dataset.
      \n Please check these match and most importantly are in the same order and rerun the function')
     }
+    if (dim(RefDistMat)[1]!=dim(RefDistMat)[2]){
+      stop('Error: The distance matrix is not a square matrix. The distance matrix should be a square matrix of pairwise distances.
+     \n Please check these match and most importantly are in the same order and rerun the function')
+    }
   }
 
-  if (!(is.na(TargetData))){
-    if (dim(LatLongs)[1]!=dim(TargetData)[3]){
+  if (!(is.na(DistVec) && length(DistVec)==1)){
+    if (dim(LatLongs)[1]!=length(DistVec)){
+      stop('Error: the number of latitude and longitude coordinates you have provided do not match the number of distances provided.
+     \n Please check these match and most importantly are in the same order and rerun the function')
+    }
+  }
+
+
+
+  if (!(is.na(RefData) && length(RefData)==1)){
+    if (length(dim(RefData))==2){
+      specimenNo <- 1
+    } else {
+      specimenNo <- 3
+    }
+    if (dim(LatLongs)[1]!=dim(RefData)[specimenNo]){
       stop('Error: the number of latitude and longitude coordinates you have provided do not match the number of specimens in the dataset.
      \n Please check these match and most importantly are in the same order and rerun the function')
     }
@@ -123,21 +141,31 @@ UserInputAssessment <- function(LatLongs, RefDistMat=NA, TargetData=NA, LongRang
   }
 
 
-  if (length(RangeSamp)>2){
-    stop('Error: the range sampling provided contains more than 2 values.
+
+  if (!(is.na(RangeSamp) && length(RangeSamp)==1)){
+    if (length(RangeSamp)>2){
+      stop('Error: the range sampling provided contains more than 2 values.
      \n Please provide either 1 value if you wish to sample both latitude and longitude equally
      \n (i.e. if the region you are looking at is approximately square) or
      \n please provide 2 values if you wish them to be sampled to different levels
      \n (i.e. if the region you are looking at is not square')
+    }
   }
 
-  if (length(LongRange)!=2){
-    stop('Error: you have provided more than 2 values in LongRange, these should be the 2 values denoting the maximum and minimum longitude range to be examined')
+
+  if (!(is.na(LongRange) && length(LongRange)==1)){
+    if (length(LongRange)!=2){
+      stop('Error: you have provided more or less than 2 values in LongRange, these should be the 2 values denoting the maximum and minimum longitude range to be examined')
+
+    }
 
   }
 
-  if (length(LatRange)!=2){
-    stop('Error: you have provided more than 2 values in LatRange, these should be the 2 values denoting the maximum and minimum latitude range to be examined')
+  if (!(is.na(LatRange) && length(LatRange)==1)){
+    if (length(LatRange)!=2){
+      stop('Error: you have provided more or less than 2 values in LatRange, these should be the 2 values denoting the maximum and minimum latitude range to be examined')
+    }
+
   }
 
 

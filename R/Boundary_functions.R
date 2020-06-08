@@ -80,6 +80,9 @@
 
 BoundaryFinder <- function(LatLongs, RefDistMat=matrix(), LongRange, LatRange, RangeSamp=10, PrintProg=TRUE, PlotValCor, ExpandMap=c(0,0), DataDump=TRUE, DataDumpPath=NA, StartPoint=1, RefIDs=NULL, IgnorePrompts=FALSE, Method=c('Pearson', 'Spearman')){
 
+  UserInputAssessment(LatLongs, RefDistMat, LongRange, LatRange, RangeSamp, Method, RefData = NA, DistVec = NA)
+
+
   if (IgnorePrompts==FALSE){
     if (DataDump==TRUE){
       if (is.na(DataDumpPath)){
@@ -448,8 +451,9 @@ BoundaryFinder <- function(LatLongs, RefDistMat=matrix(), LongRange, LatRange, R
 #' @param MapMatrix a matrix of correlation values that correspond to grid reference locations
 #' @inheritParams IDbyDistanceDistInput
 #'
-#' @keywords Spatial provenancing; Boundary finder; internal.
+#' @keywords Spatial provenancing; Boundary finder; internal
 #' @author Ardern Hulme-Beaman
+#' @export
 
 
 BoundaryCalculation <- function(MapMatrix, PlotValCor){
