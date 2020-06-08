@@ -9,6 +9,8 @@
 #'
 #' @section GeoOrigins functions:
 #'
+#' Array2Mat
+#'
 #' BoundaryCalculation
 #'
 #' BoundaryFinder
@@ -29,11 +31,17 @@
 #'
 #' IDbyDistanceRawDataCCVPar
 #'
+#' Mat2Array
+#'
 #' PlotBoundaries
 #'
 #' ProcDistanceTable
 #'
 #' ProcDistanceTablePar
+#'
+#' TraitBoundaryStats
+#'
+#' TraitBoundaryStatsPar
 #'
 #' @section Datasets:
 #' Rpraetor: geometric morphometric dataset of tooth outlines of Rattus praetor (Large New Guinea spiny rat)
