@@ -37,7 +37,7 @@
 #' http://www.sciviews.org/SciViews-R.
 #'
 #' @author Ardern Hulme-Beaman
-#'
+#' @keywords internal
 #' @examples
 #' Range.Exp <- .5
 #'
