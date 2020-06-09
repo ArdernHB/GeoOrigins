@@ -439,6 +439,7 @@ BoundaryFinder <- function(LatLongs, RefDistMat=matrix(), LongRange, LatRange, R
 
 #' Internal function for identifying boundaries from spatial correlation scores.
 #'
+#' This is an internal function to support the BoundaryFinder functions.
 #' This function takes the correlation values calculated across the spatial grid and identifies which grid points are at the boundary of of the provenancing region.
 #' These results then allow for the construction of compiled trait boundaries from spatial provenancing exercises.
 #'
