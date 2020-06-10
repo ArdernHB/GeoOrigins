@@ -25,7 +25,7 @@ GeoOrigins: Trait mapping and geographic provenancing of specimens without categ
 
 This vignette walks the reader through the GeoOrigins package using three published datasets. The goal of this vignette is accompany the first manuscript written on this method and also provide the user with the code and tools to use this packages main functionality. The main goal of the method is to provenance specimens of unknown origin to their most likely location of origin without using a priori defined groups. The methods secondary function is to use the leave-one-out correct cross validation procedure to identify trait boundaries.
 
-The vignette is split into three sections to outline the methods and code used to generate the results in the accompanying paper for each of the three datasets used there. The accompanying paper with this method presents the results generated with Pearson's r, the examples here are set to present the results generated with Spearman's rho for comparison.
+The vignette is split into three sections to outline the methods and code used to generate the results in the accompanying paper for each of the three datasets used there. The accompanying paper with this method presents the results generated with Pearson's r, examples in sections 1 and 2 here are set to present the results generated with Spearman's rho for comparison; example 3 presents a complex scenario where traits and geographic distances are so highly correlated that the predicted position of the specimen can be smaller than the resolution of the analyses, as such using Pearson's r represents a more efficient assessment of possible location.
 
 *Rattus praetor* the geographic structure of the dental morphology of the Large spiny rat of New Guinea
 -------------------------------------------------------------------------------------------------------
@@ -213,9 +213,9 @@ PlotBoundaries(PlotValCor = OrkMarvalisrThres$`Provenancing.Correlation.95%.Conf
 
 The third dataset we will examine comes from 116 specimens of *F. teydea*.
 
-Again we will work with pregenerated boundary correlation arrays and the dynamic time-warping dissimilarity matrix, which serves as a distance matrix.
+Again we will work with pre generated boundary correlation arrays and the dynamic time-warping dissimilarity matrix, which serves as a distance matrix.
 
-As with the other datasets provided this is at a lower resolution than provided in the figures of the paper and to achieve the same images requires upping the `Rang.Samp` values to `c(36, 34)`. Note that this difference in resolution can influence the position of the trait boundary and at very low resolutions (as is the case here) the boundary will inevitably move to one side or the other of the oringal range. This is observable in the NW population and corresponding boundary. Therefore it might be desirable to run a first low resolution pass followed by a higher resolution investigation afterwards.
+As with the other datasets provided this is at a lower resolution than provided in the figures of the paper and to achieve the same images requires upping the `Rang.Samp` values to `c(36, 34)`. Note that this difference in resolution can influence the position of the trait boundary and at very low resolutions (as is the case here) the boundary will inevitably move to one side or the other of the original range. This is observable in the NW population and corresponding boundary. Therefore it might be desirable to run a first low resolution pass followed by a higher resolution investigation afterwards.
 
 
 ``` {r Calculating correlation threshold and plotting trait boundaries for Fteydea}
@@ -236,11 +236,11 @@ PlotBoundaries(PlotValCor = FteydeaThres[[1]],
 ```
 
 
-A possible occurance with this method is that when the predicted location is highly precise (e.g. the results that can be achieved by log transforming the F. teydea song dissimilarities) then the resolution of the provenancing or even boundary finding grid might be too low to highlight the regions that might be the likely origin or indeed form a trait boundary. This happens because the region that is identified as the likely origin is effectively one grid squares/pixels in size or even smaller. The end result is that the correlation value for the the large grid square may not meet the high correlation value threshold and as a result no region is returned as a likely origin. In some instances it is possible for this to be confused with a negative result and could be misinterpreted as the unknown trait not being sufficiently represented in the reference dataset to predict a likely origin. An example of this is provided when examining the NE sub region of the blue chaffinch data. The identified regions in some instances are so specific that at low resolution a predicted location is not returned.
+A possible occurrence with this method is that when the predicted location is highly precise (e.g. the results that can be achieved by log transforming the F. teydea song dissimilarities) then the resolution of the provenancing or even boundary finding grid might be too low to highlight the regions that might be the likely origin or indeed form a trait boundary. This happens because the region that is identified as the likely origin is effectively one grid squares/pixels in size or even smaller. The end result is that the correlation value for the the large grid square may not meet the high correlation value threshold and as a result no region is returned as a likely origin. In some instances it is possible for this to be confused with a negative result and could be misinterpreted as the unknown trait not being sufficiently represented in the reference dataset to predict a likely origin. An example of this is provided when examining the NE sub region of the blue chaffinch data. The identified regions in some instances are so specific that at low resolution a predicted location is not returned.
 
 Note that log transforming the dissimilarity matrix results in the diagonal of 0s (where the dissimilarity between the same individual is reported) becomes `-Inf` so this should be replaced with 0s again.
 
-Note also that this dataset is so highly spatially correlated that setting the Threshold R with Spearman will require the grid sampling to be prohibitively high. Therefore for the purposes of this vignette example we will use Pearon's method. This issue can be easily identified by examining the output of IDbyDistanceDistInputCCV to see what the threshold rho is; if it is close to 1 then consider one of the following: increasing the confidence required to identify the region of identification; increasing the grid sampling; or user defining the rho threshold and ensure that a description of that this was carried out is included in your description of methods.
+Note also that this dataset is so highly spatially correlated that setting the Threshold R with Spearman will require the grid sampling to be prohibitively high. Therefore for the purposes of this vignette example we will go back to using Pearon's method as in the accompanying paper. This issue can be easily identified by examining the output of IDbyDistanceDistInputCCV to see what the threshold rho is; if it is close to 1 then consider one of the following: increasing the confidence required to identify the region of identification; increasing the grid sampling; or user defining the rho threshold and ensure that a description of that this was carried out is included in your description of methods.
 
 ``` {r Examples of working with fine resolution and potential issues with Fteydea}
 LogFteydeaDisMat <- log(Fteydea$SongDisMat)
@@ -267,9 +267,9 @@ IDbyDistanceDistInput(LatLongs = NEFtInfo[-1,2:3],
                       RangeSamp = NEFtR.Samp, 
                       Verbose = FALSE, 
                       Validate = FALSE, 
-                      PlotValCor = NEFtrThres$`Provenancing.Correlation.1%.Confidence`, 
+                      PlotValCor = NEFtrThres$`Provenancing.Correlation.99%.Confidence`, 
                       PlotProv = TRUE,
-                      Method = 'Spearman')
+                      Method = 'Pearson')
 points(x = NEFtInfo$Long[1], y=NEFtInfo$Lat[1], col='blue', pch=16)
 ```
 
@@ -285,7 +285,7 @@ IDbyDistanceDistInput(LatLongs = NEFtInfo[-1,2:3],
                       RangeSamp = NEFtR.Samp, 
                       Verbose = FALSE, 
                       Validate = FALSE, 
-                      PlotValCor = NEFtrThres[[1]], 
+                      PlotValCor = NEFtrThres$`Provenancing.Correlation.99%.Confidence`, 
                       PlotProv = TRUE,
                       Method = 'Pearson')
 points(x = NEFtInfo$Long[1], y=NEFtInfo$Lat[1], col='blue', pch=16)
@@ -303,7 +303,7 @@ IDbyDistanceDistInput(LatLongs = NEFtInfo[-1,2:3],
                       RangeSamp = NEFtR.Samp, 
                       Verbose = FALSE, 
                       Validate = FALSE, 
-                      PlotValCor = NEFtrThres[[1]], 
+                      PlotValCor = NEFtrThres$`Provenancing.Correlation.99%.Confidence`, 
                       PlotProv = TRUE,
                       Method = 'Pearson')
 points(x = NEFtInfo$Long[1], y=NEFtInfo$Lat[1], col='blue', pch=16)
@@ -341,7 +341,7 @@ NEFt.Boundaryfinding <- BoundaryFinder(LatLongs = NEFtInfo[,2:3],
                                        LongRange = NEFt.Long.Range, 
                                        LatRange = NEFt.Lat.Range, 
                                        RangeSamp = NEFtR.Samp, 
-                                       PlotValCor = NEFtrThres[[1]],
+                                       PlotValCor = NEFtrThres$`Provenancing.Correlation.99%.Confidence`,
                                        RefIDs = NEFtInfo$ID,
                                        IgnorePrompts = TRUE,
                                        Method = 'Pearson')
@@ -352,14 +352,14 @@ NEFt.Boundaryfinding <- BoundaryFinder(LatLongs = NEFtInfo[,2:3],
 And again with a higher resolution:
 
 ``` {r Addressing potential issues with high precision datasets with examples from Fteydea 5}
-NEFtR.Samp <- c(20)
+NEFtR.Samp <- c(20,30)
 NEFt.MidRes.Boundaryfinding <- BoundaryFinder(LatLongs = NEFtInfo[,2:3], 
                                               RefDistMat = NEDisMat, 
                                               DataDump = FALSE, 
                                               LongRange = NEFt.Long.Range, 
                                               LatRange = NEFt.Lat.Range, 
                                               RangeSamp = NEFtR.Samp, 
-                                              PlotValCor = NEFtrThres[[1]],
+                                              PlotValCor = NEFtrThres$`Provenancing.Correlation.99%.Confidence`,
                                               RefIDs = NEFtInfo$ID,
                                               IgnorePrompts = TRUE,
                                               Method = 'Pearson')
