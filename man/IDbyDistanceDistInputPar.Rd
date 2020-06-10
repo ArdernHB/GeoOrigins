@@ -50,7 +50,4 @@ The map plotting of this function makes use of the functions of the \code{maps} 
 \author{
 Ardern Hulme-Beaman
 }
-\keyword{Spatial}
-\keyword{identification}
 \keyword{internal}
-\keyword{provenancing}

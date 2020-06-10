@@ -29,6 +29,3 @@ https://CRAN.R-project.org/package=geosphere
 \author{
 Ardern Hulme-Beaman
 }
-\keyword{Haversine}
-\keyword{distances}
-\keyword{geographic}

@@ -20,5 +20,3 @@ specimens and columns are alternating landmark variables
 \author{
 Ardern Hulme-Beaman
 }
-\keyword{data}
-\keyword{format}

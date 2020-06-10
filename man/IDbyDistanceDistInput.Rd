@@ -111,10 +111,8 @@ IDbyDistanceDistInput(LatLongs = Rpraetor$Lat.Long[-1,],
                    PlotProv = TRUE,
                    Method = 'Spearman')
 
+
 }
 \author{
 Ardern Hulme-Beaman
 }
-\keyword{Spatial}
-\keyword{identification}
-\keyword{provenancing}

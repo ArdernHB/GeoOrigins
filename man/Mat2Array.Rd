@@ -22,5 +22,3 @@ array where rows are landmarks and columns correspond with the dimensions.
 \author{
 Ardern Hulme-Beaman
 }
-\keyword{data}
-\keyword{format}

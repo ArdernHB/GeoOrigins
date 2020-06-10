@@ -7,7 +7,8 @@
 UserInputAssessment(
   LatLongs,
   RefDistMat = NA,
-  TargetData = NA,
+  RefData = NA,
+  DistVec = NA,
   LongRange,
   LatRange,
   RangeSamp,
@@ -19,7 +20,7 @@ UserInputAssessment(
 
 \item{RefDistMat}{is a square matrix of pairwise distances among all reference specimens.}
 
-\item{TargetData}{is a vector of unknown specimen data. If it is geometric morphometric data is should be a vector of superimposed coordinated in the format X1, Y1, X2, Y2... etc. (or a vector of other standardised variables that can appropriately have euclidean distances calculated between it and reference variables). NB if applied to a reference collection specimen be sure to remove it from the RefData dataset.}
+\item{RefData}{is a matrix of Reference specimen data where the rows are the individual reference specimens and the columns are the variables in the same order as the TargetData vector.}
 
 \item{LongRange}{is a vector of 2 elements defining the maximum and minimum Longitude values that the provenancing method should explore. This will also define the mapping range in the final plotted output.}
 
@@ -36,3 +37,4 @@ the function throws an error
 \author{
 Ardern Hulme-Beaman
 }
+\keyword{internal}

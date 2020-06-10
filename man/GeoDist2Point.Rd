@@ -29,7 +29,4 @@ https://CRAN.R-project.org/package=geosphere
 \author{
 Ardern Hulme-Beaman
 }
-\keyword{Haversine}
-\keyword{distance}
-\keyword{geographic}
 \keyword{internal}

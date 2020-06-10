@@ -16,7 +16,7 @@ For more information, updates or queires please see:
 \section{GeoOrigins functions}{
 
 
-BoundaryCalculation
+Array2Mat
 
 BoundaryFinder
 
@@ -36,11 +36,17 @@ IDbyDistanceRawDataCCV
 
 IDbyDistanceRawDataCCVPar
 
+Mat2Array
+
 PlotBoundaries
 
 ProcDistanceTable
 
 ProcDistanceTablePar
+
+TraitBoundaryStats
+
+TraitBoundaryStatsPar
 }
 
 \section{Datasets}{

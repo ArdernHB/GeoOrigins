@@ -20,6 +20,4 @@ This function takes a named colour and returns the transparent equivalent
 \author{
 Ardern Hulme-Beaman
 }
-\keyword{colour}
 \keyword{internal}
-\keyword{transparency}

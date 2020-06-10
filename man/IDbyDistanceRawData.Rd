@@ -143,6 +143,3 @@ points(x = Rpraetor$Lat.Long$Long[1], y=Rpraetor$Lat.Long$Lat[1], col='blue', pc
 \author{
 Ardern Hulme-Beaman
 }
-\keyword{Spatial}
-\keyword{identification}
-\keyword{provenancing}

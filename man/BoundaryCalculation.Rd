@@ -15,14 +15,11 @@ BoundaryCalculation(MapMatrix, PlotValCor)
 This function returns a matrix of logical TRUE/FALSE values identifying the boundary of the desired correlation value.
 }
 \description{
+This is an internal function to support the BoundaryFinder functions.
 This function takes the correlation values calculated across the spatial grid and identifies which grid points are at the boundary of of the provenancing region.
 These results then allow for the construction of compiled trait boundaries from spatial provenancing exercises.
 }
 \author{
 Ardern Hulme-Beaman
 }
-\keyword{Boundary}
-\keyword{Spatial}
-\keyword{finder;}
-\keyword{internal.}
-\keyword{provenancing;}
+\keyword{internal}

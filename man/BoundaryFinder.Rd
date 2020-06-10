@@ -116,6 +116,3 @@ Boundaryfinding <- BoundaryFinder(LatLongs = Rpraetor$Lat.Long,
 \author{
 Ardern Hulme-Beaman
 }
-\keyword{Spatial}
-\keyword{identification}
-\keyword{provenancing}

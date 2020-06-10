@@ -55,6 +55,3 @@ The resulting array can be transferred to the \code{PlotBoundaries} function for
 \author{
 Ardern Hulme-Beaman
 }
-\keyword{Spatial}
-\keyword{boundary}
-\keyword{cluster}

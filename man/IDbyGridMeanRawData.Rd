@@ -57,6 +57,12 @@ IDbyGridMeanRawData(
 \item{PlotProv}{logical if the map should be printed with a polygon demarking a contour at a user defined correlation value.}
 }
 \description{
+This function was for comparison between a geographically spatially based k-NN approach
+compared with the GeoOrigins correlation approach; it is the closest direct comparison between
+k-NN and the new correlation method. However, it is still effectively a user defined group based method
+because the user defines the grid size and the members of each grid cell effectively form a group
+that unknowns are identified to (albeit that the unknowns are identified not to the group as such but the
+group mean i.e. the mean of all the specimens in the grid cell).
 This function takes the raw variables of an unknown specimen and reference specimens
 and uses euclidean distances to calculate a likely spatial provenance. Note that this
 procedure can only be applied to one unknown specimen at a time. Shape variables
@@ -123,3 +129,4 @@ GridIDRes <- NULL
 \author{
 Ardern Hulme-Beaman
 }
+\keyword{internal}

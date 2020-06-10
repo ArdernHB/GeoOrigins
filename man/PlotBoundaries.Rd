@@ -84,8 +84,3 @@ PlotBoundaries(PlotValCor = FteydeaThres$`Provenancing.Correlation.95\%.Confiden
 \author{
 Ardern Hulme-Beaman
 }
-\keyword{Boundary}
-\keyword{Spatial}
-\keyword{finder}
-\keyword{plotting}
-\keyword{provenancing}
