@@ -529,17 +529,6 @@ BoundaryFinderPar <- function(LatLongs, RefDistMat=matrix(), LongRange, LatRange
 #' @return This function returns a list of two objects: 1. the area of the convex hull of the distribution of samples and 2. a dataframe of two columns with the area returned of reach specimen in the identification process and the corresponding percentage that area represents of the sample distribution.
 #'
 #' @author Ardern Hulme-Beaman
-#' @examples
-#' FteydeaThres <- IDbyDistanceDistInputCCV(LatLongs = Fteydea$Info[,2:3],
-#'                DistDataMat = Fteydea$SongDisMat,
-#'                Verbose = TRUE,
-#'                ProvConfidence = .95,
-#'                PrintProg = FALSE)
-#' TraitBoundaryStats(PlotValCor = FteydeaThres$`Provenancing.Correlation.95%.Confidence`,
-#'                RawCorArray = Fteydea$Total.Boundary$RawCorData,
-#'                LatLongs = Fteydea$Info[,2:3],
-#'                RefIDs = Fteydea$Info[,1]
-#'                )
 #'
 #' @export
 
