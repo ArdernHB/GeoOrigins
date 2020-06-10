@@ -36,7 +36,7 @@
 
 IDbyDistanceDistInputPar <- function(LatLongsPar, DistDataVecPar, LongRangePar, LatRangePar, RangeSamp=10, MethodPar=c('Spearman', 'Pearson')){
 
-  UserInputAssessment(LatLongs=LatLongsPar, DistVec = DistDataVecPar, LongRange=LongRangePar, LatRange=LatRangePar, RangeSamp, Method, RefDistMat = NA, RefData = NA)
+  UserInputAssessment(LatLongs=LatLongsPar, DistVec = DistDataVecPar, LongRange=LongRangePar, LatRange=LatRangePar, RangeSamp, Method=MethodPar, RefDistMat = NA, RefData = NA)
 
   #making LatLongs a dataframe
   LatLongsPar <- as.data.frame(LatLongsPar)
