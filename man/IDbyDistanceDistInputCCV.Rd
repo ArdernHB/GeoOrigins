@@ -69,5 +69,6 @@ rThres <- IDbyDistanceDistInputCCV(LatLongs = Rpraetor$Lat.Long,
               DistDataMat = RatDistMat,
               Verbose = TRUE,
               ProvConfidence = .95,
-              PrintProg = FALSE)
+              PrintProg = FALSE,
+              Method = 'Spearman')
 }

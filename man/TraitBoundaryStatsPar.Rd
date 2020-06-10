@@ -27,19 +27,6 @@ return the Provenancing area values or percentages that are returned by the \cod
 function when the \code{verbose} aregument is set to \code{TRUE}. It is the parallel processing equivalent of
 the \code{TraitBoundaryStats} function.
 }
-\examples{
-FteydeaThres <- IDbyDistanceDistInputCCV(LatLongs = Fteydea$Info[,2:3],
-               DistDataMat = Fteydea$SongDisMat,
-               Verbose = TRUE,
-               ProvConfidence = .95,
-               PrintProg = FALSE)
-TraitBoundaryStats(PlotValCor = FteydeaThres$`Provenancing.Correlation.95\%.Confidence`,
-               RawCorArray = Fteydea$Total.Boundary$RawCorData,
-               LatLongs = Fteydea$Info[,2:3],
-               RefIDs = Fteydea$Info[,1]
-               )
-
-}
 \author{
 Ardern Hulme-Beaman
 }

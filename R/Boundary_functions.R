@@ -78,7 +78,7 @@
 
 BoundaryFinder <- function(LatLongs, RefDistMat=matrix(), LongRange, LatRange, RangeSamp=10, PrintProg=TRUE, PlotValCor, ExpandMap=c(0,0), DataDump=TRUE, DataDumpPath=NA, StartPoint=1, RefIDs=NULL, IgnorePrompts=FALSE, Method=c('Pearson', 'Spearman')){
 
-  UserInputAssessment(LatLongs, RefDistMat, LongRange, LatRange, RangeSamp, Method, RefData = NA, DistVec = NA)
+  UserInputAssessment(LatLongs, RefDistMat, Method, RefData = 'skip', DistVec = 'skip')
 
 
   if (IgnorePrompts==FALSE){

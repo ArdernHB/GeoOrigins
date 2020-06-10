@@ -6,12 +6,9 @@
 \usage{
 UserInputAssessment(
   LatLongs,
-  RefDistMat = NA,
-  RefData = NA,
-  DistVec = NA,
-  LongRange,
-  LatRange,
-  RangeSamp,
+  RefDistMat = "skip",
+  RefData = "skip",
+  DistVec = "skip",
   Method
 )
 }
@@ -21,12 +18,6 @@ UserInputAssessment(
 \item{RefDistMat}{is a square matrix of pairwise distances among all reference specimens.}
 
 \item{RefData}{is a matrix of Reference specimen data where the rows are the individual reference specimens and the columns are the variables in the same order as the TargetData vector.}
-
-\item{LongRange}{is a vector of 2 elements defining the maximum and minimum Longitude values that the provenancing method should explore. This will also define the mapping range in the final plotted output.}
-
-\item{LatRange}{is a vector of 2 elements defining the maximum and minimum Latitude values that the provenancing method should explore. This will also define the mapping range in the final plotted output.}
-
-\item{RangeSamp}{is an integer vector of 1 or 2 elements that defines the resolution of spatial sampling. If one element is provided then both the latitude and longitude ranges are equally and evenly sampled using this value. If 2 elements are provided they should be in the order of latitude longitude and each range will be evenly sampled with its respective value.}
 
 \item{Method}{determines what kind of correlation coefficient should be used, either "Spearman" or "Pearson". Spearman's ranked correlation coefficient does not assume a linear relationship between geographic and trait distances, whereas Pearson's coefficient does.}
 }

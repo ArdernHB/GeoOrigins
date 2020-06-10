@@ -96,7 +96,7 @@
 
 IDbyDistanceRawData <- function(LatLongs, TargetData, RefData, ShapeData=TRUE, ShapeDim=2, DistMethod=c("Euc", "Proc"), LongRange=c(0,0), LatRange=c(0,0), RangeSamp=10, Verbose=TRUE, PrintProg=FALSE, Validate= FALSE, ValidLatLongs, PlotRes=TRUE, HeatHue= c(.15, 1), TileSize=2, PlotProv=FALSE, PlotValCor, Method=c('Spearman', 'Pearson')){
 
-  UserInputAssessment(LatLongs, RefData, LongRange, LatRange, RangeSamp, Method, RefDistMat = NA, DistVec = NA)
+  UserInputAssessment(LatLongs, RefData, Method, RefDistMat = 'skip', DistVec = 'skip')
 
 
   #making LatLongs a dataframe
@@ -360,7 +360,7 @@ IDbyDistanceRawData <- function(LatLongs, TargetData, RefData, ShapeData=TRUE, S
 
 IDbyDistanceRawDataCCV <- function(LatLongs, RefData, ShapeData=TRUE, ShapeDim=2, DistMethod=c("Euc", "Proc"), Verbose=TRUE, PrintProg=TRUE, ProvConfidence=0.95, Method=c('Spearman', 'Pearson')){
 
-  UserInputAssessment(LatLongs, RefData, LongRange=NA, LatRange=NA, RangeSamp=NA, Method, RefDistMat = NA, DistVec = NA)
+  UserInputAssessment(LatLongs, RefData, Method, RefDistMat = 'skip', DistVec = 'skip')
 
   #making LatLongs a dataframe
   LatLongs <- as.data.frame(LatLongs)

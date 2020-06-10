@@ -36,7 +36,7 @@
 
 IDbyDistanceDistInputPar <- function(LatLongsPar, DistDataVecPar, LongRangePar, LatRangePar, RangeSamp=10, MethodPar=c('Spearman', 'Pearson')){
 
-  UserInputAssessment(LatLongs=LatLongsPar, DistVec = DistDataVecPar, LongRange=LongRangePar, LatRange=LatRangePar, RangeSamp, Method=MethodPar, RefDistMat = NA, RefData = NA)
+  UserInputAssessment(LatLongs=LatLongsPar, DistVec = DistDataVecPar, Method=MethodPar, RefDistMat = 'skip', RefData = 'skip')
 
   #making LatLongs a dataframe
   LatLongsPar <- as.data.frame(LatLongsPar)
@@ -147,7 +147,7 @@ IDbyDistanceDistInputPar <- function(LatLongsPar, DistDataVecPar, LongRangePar, 
 
 IDbyDistanceDistInputCCVPar <- function(LatLongs, DistDataMat, Verbose=TRUE, ProvConfidence=0.95, Method=c('Spearman', 'Pearson')){
 
-  UserInputAssessment(LatLongs, RefDistMat=DistDataMat, LongRange=NA, LatRange=NA, RangeSamp=NA, Method, RefData = NA, DistVec = NA)
+  UserInputAssessment(LatLongs, RefDistMat=DistDataMat, Method, RefData = 'skip', DistVec = 'skip')
 
 
   #making LatLongs a dataframe
@@ -251,7 +251,7 @@ IDbyDistanceDistInputCCVPar <- function(LatLongs, DistDataMat, Verbose=TRUE, Pro
 
 IDbyDistanceRawDataCCVPar <- function(LatLongs, RefData, ShapeData=TRUE, ShapeDim=2, DistMethod=c("Euc", "Proc"), Verbose=TRUE, ProvConfidence=0.95, Method=c('Pearson', 'Spearman')){
 
-  UserInputAssessment(LatLongs, RefData, LongRange=NA, LatRange=NA, RangeSamp=NA, Method, RefDistMat = NA, DistVec = NA)
+  UserInputAssessment(LatLongs, RefData, Method, RefDistMat = 'skip', DistVec = 'skip')
 
 
   #making LatLongs a dataframe
@@ -367,7 +367,7 @@ IDbyDistanceRawDataCCVPar <- function(LatLongs, RefData, ShapeData=TRUE, ShapeDi
 
 BoundaryFinderPar <- function(LatLongs, RefDistMat=matrix(), LongRange, LatRange, RangeSamp=10, ExpandMap=c(0,0), StartPoint=1, RefIDs=NULL, IgnorePrompts=FALSE, Method = c('Spearman', 'Pearson')){
 
-  UserInputAssessment(LatLongs, RefDistMat, LongRange, LatRange, RangeSamp, Method, RefData = NA, DistVec = NA)
+  UserInputAssessment(LatLongs, RefDistMat, Method, RefData = 'skip', DistVec = 'skip')
 
 
   #making LatLongs a dataframe
