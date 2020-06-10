@@ -650,7 +650,8 @@ PlotBoundaries <- function(PlotValCor, DataDump=TRUE, Path=NA, RawCorArray=NA , 
 #'                DistDataMat = Fteydea$SongDisMat,
 #'                Verbose = TRUE,
 #'                ProvConfidence = .95,
-#'                PrintProg = FALSE)
+#'                PrintProg = FALSE,
+#'                Method = 'Spearman')
 #' TraitBoundaryStats(PlotValCor = FteydeaThres$`Provenancing.Correlation.95%.Confidence`,
 #'                RawCorArray = Fteydea$Total.Boundary$RawCorData,
 #'                LatLongs = Fteydea$Info[,2:3],
