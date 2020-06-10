@@ -533,7 +533,8 @@ BoundaryCalculation <- function(MapMatrix, PlotValCor){
 #'                DistDataMat = Fteydea$SongDisMat,
 #'                Verbose = TRUE,
 #'                ProvConfidence = .95,
-#'                PrintProg = FALSE)
+#'                PrintProg = FALSE,
+#'                Method = 'Spearman')
 #' PlotBoundaries(PlotValCor = FteydeaThres$`Provenancing.Correlation.95%.Confidence`,
 #'                DataDump = FALSE,
 #'                RawCorArray = Fteydea$Total.Boundary$RawCorData,
