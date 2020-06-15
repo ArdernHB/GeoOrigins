@@ -33,7 +33,6 @@
 #'   \item{Proc.Dist}{Square distance matrix with pairwise Procrustes Distances between all 553 \emph{M. arvalis} specimens.}
 #'   \item{Orkney.Boundary}{A list including a dataframe with provenancing area (in m2) and an array of trait boundary finding correlation values using Spearman's method for all 131 Orkney specimens for inputting into the \code{PlotBoundaries} function. This is provided as an example because the \code{BoundaryFinder} function can take a long time to compute.}
 #'   \item{Total.Boundary}{A list including a dataframe with provenancing area (in m2) and an array of trait boundary finding correlation values using Spearman's method for all 553 vole specimens for inputting into the \code{PlotBoundaries} function. This is provided as an example because the \code{BoundaryFinder} function can take a long time to compute.}
-#'   \item{LMs}{Landmark data of \emph{M. arvalis} dental shape in the form of an array. Please cite Cucchi et al. 2014 for use of these data.}
 #' }
 #' @source \url{https://doi.org/10.1111/evo.12476}
 "Marvalis"
