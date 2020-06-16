@@ -365,7 +365,7 @@ IDbyDistanceRawDataCCVPar <- function(LatLongs, RefData, ShapeData=TRUE, ShapeDi
 #' @export
 
 
-BoundaryFinderPar <- function(LatLongs, RefDistMat=matrix(), LongRange, LatRange, RangeSamp=10, ExpandMap=c(0,0), StartPoint=1, RefIDs=NULL, IgnorePrompts=FALSE, Method = c('Spearman', 'Pearson')){
+BoundaryFinderPar <- function(LatLongs, RefDistMat=matrix(), LongRange, LatRange, RangeSamp=10, ExpandMap=c(0,0), StartPoint=1, RefIDs=NULL, IgnorePrompts=FALSE, Method = c('Spearman', 'Pearson'), PacificCent=FALSE){
 
   UserInputAssessment(LatLongs, RefDistMat, Method, RefData = 'skip', DistVec = 'skip')
 
@@ -423,7 +423,7 @@ BoundaryFinderPar <- function(LatLongs, RefDistMat=matrix(), LongRange, LatRange
 
 
 
-  IDbyDistanceDistInputPar <- function(LatLongsPar, DistDataVecPar, LongRangePar, LatRangePar, RangeSamp=10, ParMethod=Method){
+  IDbyDistanceDistInputPar <- function(LatLongsPar, DistDataVecPar, LongRangePar, LatRangePar, RangeSamp=10, ParMethod=Method, PacificCent=PacificCent){
     #LatLongsPar = LatLongs[-1,]; DistDataVecPar = RefDistMat[-1,1]; LongRangePar = LongRange; LatRangePar = LatRange; RangeSamp; ParMethod = Method
 
     #making LatLongs a dataframe
@@ -459,7 +459,16 @@ BoundaryFinderPar <- function(LatLongs, RefDistMat=matrix(), LongRange, LatRange
     LatRangeSteps <- (LatRangePar[2]-LatRangePar[1])/(LatSamp-2)
 
     #this output for Lat/Long ways provides what the loop should sequence through
-    Longways <- c(LongRangePar[1]-LongRangeSteps, seq(LongRangePar[1], LongRangePar[2], by = LongRangeSteps), LongRangePar[2]+LongRangeSteps)
+    if (PacificCent==TRUE){
+      MidRange <- seq(LongRange[1], LongRange[2]+360, by = sqrt(LongRangeSteps^2))
+      MidRange[which(MidRange>=180)] <- MidRange[which(MidRange>=180)]-360
+      Longways <- c(LongRange[1]+LongRangeSteps, MidRange, LongRange[2]-LongRangeSteps)
+    } else {
+      Longways <- c(LongRange[1]-LongRangeSteps, seq(LongRange[1], LongRange[2], by = LongRangeSteps), LongRange[2]+LongRangeSteps)
+    }
+
+
+
     Latways <- c(LatRangePar[1]-LatRangeSteps, seq(LatRangePar[1], LatRangePar[2], by = LatRangeSteps), LatRangePar[2]+LatRangeSteps)
 
     CorMatrixRes <- matrix(NA, nrow = length(Latways), ncol = length(Longways))
@@ -502,7 +511,7 @@ BoundaryFinderPar <- function(LatLongs, RefDistMat=matrix(), LongRange, LatRange
 
   b <- a <- 1
   IdentificationRange <- foreach::foreach(a = StartPoint:dim(RefDistMat)[1], b = -StartPoint:-dim(RefDistMat)[1]) %dopar% {
-    IDbyDistanceDistInputPar(LatLongsPar = LatLongs[b,], DistDataVecPar = RefDistMat[b,a], LongRangePar = LongRange, LatRangePar = LatRange, RangeSamp, ParMethod = Method)
+    IDbyDistanceDistInputPar(LatLongsPar = LatLongs[b,], DistDataVecPar = RefDistMat[b,a], LongRangePar = LongRange, LatRangePar = LatRange, RangeSamp, ParMethod = Method, PacificCent = PacificCent)
   }
 
   parallel::stopCluster(clust)
@@ -536,7 +545,7 @@ BoundaryFinderPar <- function(LatLongs, RefDistMat=matrix(), LongRange, LatRange
 
 TraitBoundaryStatsPar <- function(RawCorArray, LatLongs, RefIDs, PlotValCor){
 
-  SpecimenLoc <- cbind(chr2nu(LatLongs$Long), chr2nu(LatLongs$Lat))
+  SpecimenLoc <- cbind(chr2nu(LatLongs$Longs), chr2nu(LatLongs$Lats))
   DistPol <-  sp::Polygon(SpecimenLoc[grDevices::chull(SpecimenLoc),])
   DistPols <-  sp::Polygons(list(DistPol),1)
   DistSpatPol <-  sp::SpatialPolygons(list(DistPols))

@@ -60,7 +60,7 @@
 #' @export
 
 
-IDbyDistanceDistInput <- function(LatLongs, DistDataVec, LongRange, LatRange, RangeSamp=10, Verbose=TRUE, PrintProg=FALSE, Validate= FALSE, ValidLatLongs, PlotRes=TRUE, HeatHue= c(.15, 1), TileSize=2, PlotProv=FALSE, PlotValCor, Method=c('Pearson', 'Spearman')){
+IDbyDistanceDistInput <- function(LatLongs, DistDataVec, LongRange, LatRange, RangeSamp=10, Verbose=TRUE, PrintProg=FALSE, Validate= FALSE, ValidLatLongs, PlotRes=TRUE, HeatHue= c(.15, 1), TileSize=2, PlotProv=FALSE, PlotValCor, Method=c('Pearson', 'Spearman'), PacificCent=FALSE){
 
 
   UserInputAssessment(LatLongs, RefData = 'skip', RefDistMat = 'skip', DistVec = DistDataVec, Method)
@@ -130,7 +130,15 @@ IDbyDistanceDistInput <- function(LatLongs, DistDataVec, LongRange, LatRange, Ra
     LatRangeSteps <- (LatRange[2]-LatRange[1])/(LatSamp-2)
 
     #this output for Lat/Long ways provides what the loop should sequence through
-    Longways <- c(LongRange[1]-LongRangeSteps, seq(LongRange[1], LongRange[2], by = LongRangeSteps), LongRange[2]+LongRangeSteps)
+    if (PacificCent==TRUE){
+      MidRange <- seq(LongRange[1], LongRange[2]+360, by = sqrt(LongRangeSteps^2))
+      MidRange[which(MidRange>=180)] <- MidRange[which(MidRange>=180)]-360
+      Longways <- c(LongRange[1]+LongRangeSteps, MidRange, LongRange[2]-LongRangeSteps)
+    } else {
+      Longways <- c(LongRange[1]-LongRangeSteps, seq(LongRange[1], LongRange[2], by = LongRangeSteps), LongRange[2]+LongRangeSteps)
+    }
+
+
     Latways <- c(LatRange[1]-LatRangeSteps, seq(LatRange[1], LatRange[2], by = LatRangeSteps), LatRange[2]+LatRangeSteps)
 
 
@@ -174,13 +182,22 @@ IDbyDistanceDistInput <- function(LatLongs, DistDataVec, LongRange, LatRange, Ra
   #naming the variables
   names(CoordsHeat) <- c("Lats", "Longs", "Cor")
 
+  if (PacificCent==TRUE){
+    PlottingMap <- "world2Hires"
+    Longways[which(Longways<=0)] <- Longways[which(Longways<=0)]+360
+    CoordsHeat$Longs[which(CoordsHeat$Longs<=0)] <- chr2nu(CoordsHeat$Longs[which(chr2nu(CoordsHeat$Longs)<=0)])+360
+    LatLongs$Longs[which(LatLongs$Longs<=0)] <- chr2nu(LatLongs$Longs[which(chr2nu(LatLongs$Longs)<=0)])+360
+
+  } else {
+    PlottingMap <- "world"
+  }
 
   #if there is not a validating the data then we this means
   #we either have the validation result from a previous analyses and we can plot it
   #or we don't and we're not yet interested in it
   if (Validate==FALSE){
     if (PlotRes==TRUE){
-      maps::map("world", xlim=c(min(Longways), max(Longways)), ylim=c(min(Latways), max(Latways)), interior=FALSE, col="black", bg=graphics::par(bg="white"))
+      maps::map(PlottingMap, xlim=c(min(Longways), max(Longways)), ylim=c(min(Latways), max(Latways)), interior=FALSE, col="black", bg=graphics::par(bg="white"))
 
 
       #creating colour scale from max and min slope based on which variable we're using
@@ -193,7 +210,7 @@ IDbyDistanceDistInput <- function(LatLongs, DistDataVec, LongRange, LatRange, Ra
       CoordsHeats <- grDevices::hsv(h = HeatHue[1], v = 1, s = CoordsHeatscaled, alpha = HeatHue[2])
 
       #plotting the correlations
-      graphics::points(x = as.character(CoordsHeat$Long), y = as.character(CoordsHeat$Lat), pch=15, col=CoordsHeats,  cex=TileSize)
+      graphics::points(x = as.character(CoordsHeat$Longs), y = as.character(CoordsHeat$Lats), pch=15, col=CoordsHeats,  cex=TileSize)
 
       #here if we want to plot a polygon of the region that
       #approximates the region the specimens came from (with whatever level of confidence we have selected)
@@ -226,9 +243,9 @@ IDbyDistanceDistInput <- function(LatLongs, DistDataVec, LongRange, LatRange, Ra
 
       }
 
-      maps::map("world", xlim=c(min(Longways), max(Longways)), ylim=c(min(Latways), max(Latways)), interior=FALSE, col="black", bg=graphics::par(bg="white"), add=T)
+      maps::map(PlottingMap, xlim=c(min(Longways), max(Longways)), ylim=c(min(Latways), max(Latways)), interior=FALSE, col="black", bg=graphics::par(bg="white"), add=T)
 
-      graphics::points(x = as.character(LatLongs$Long), y = as.character(LatLongs$Lat), pch=23, bg='orange',  cex=1)
+      graphics::points(x = as.character(LatLongs$Longs), y = as.character(LatLongs$Lats), pch=23, bg='orange',  cex=1)
       maps::map.axes()
     }
   }

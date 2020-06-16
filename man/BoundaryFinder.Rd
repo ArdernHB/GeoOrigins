@@ -18,7 +18,8 @@ BoundaryFinder(
   StartPoint = 1,
   RefIDs = NULL,
   IgnorePrompts = FALSE,
-  Method = c("Pearson", "Spearman")
+  Method = c("Pearson", "Spearman"),
+  PacificCent = FALSE
 )
 }
 \arguments{
@@ -49,6 +50,8 @@ BoundaryFinder(
 \item{IgnorePrompts}{default is set to FALSE, but if set to TRUE queries such as those confirming the location of the datadump will be suppressed.}
 
 \item{Method}{determines what kind of correlation coefficient should be used, either "Spearman" or "Pearson". Spearman's ranked correlation coefficient does not assume a linear relationship between geographic and trait distances, whereas Pearson's coefficient does.}
+
+\item{PacificCent}{logical determines whether the plotted map and analyses should be centred on the Pacific. Default set to FALSE.}
 }
 \value{
 If Verbose is TRUE then an array of all values for every sampled grid reference is returned. If Verbose is FALSE then only those grid references with the highest correlation values are returned.

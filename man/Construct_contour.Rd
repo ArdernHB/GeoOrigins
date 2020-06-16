@@ -7,7 +7,7 @@
 Construct_contour(LatLongs)
 }
 \arguments{
-\item{LatLongs}{A dataframe with a 'Lat' column and a 'Long' column containing all latitude-longitude co-ordinates that are to form the basis upon which the contour is formed.}
+\item{LatLongs}{A dataframe with a 'Lats' column and a 'Longs' column containing all latitude-longitude co-ordinates that are to form the basis upon which the contour is formed.}
 }
 \value{
 Contour polygon

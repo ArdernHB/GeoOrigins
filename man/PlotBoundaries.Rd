@@ -17,7 +17,8 @@ PlotBoundaries(
   LatLongs,
   RefPchCol = "blue",
   RefPchSize = 1,
-  BoundaryHue = c(1, 1)
+  BoundaryHue = c(1, 1),
+  PacificCent = FALSE
 )
 }
 \arguments{
@@ -46,6 +47,8 @@ PlotBoundaries(
 \item{RefPchSize}{is a single numeric value to set the size of the points marking where reference specimens are located.}
 
 \item{BoundaryHue}{is a vector of 2 elements. The first element sets the colour hue value on a scale of 0 to 1 for a hsv function. The second value sets a transparancy level between 0 and 1, 0 being completely transparent.}
+
+\item{PacificCent}{logical determines whether the plotted map and analyses should be centred on the Pacific. Default set to FALSE.}
 }
 \description{
 This function plots the results taken from the \code{BoundaryFinder} function that have been dumped in

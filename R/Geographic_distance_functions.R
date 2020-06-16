@@ -42,6 +42,7 @@ GeoDist2Point <- function(RefLatLongs, TargetLatLong){
 #'
 #' @author Ardern Hulme-Beaman
 #' @import geosphere
+#' @export
 
 
 GeoDist2PointTable <- function(RefLatLongs, IDs=NA){

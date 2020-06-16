@@ -13,12 +13,13 @@ Encoding: UTF-8
 LazyData: true
 URL: https://github.com/ArdernHB/GeoOrigins
 BugReports: https://github.com/ArdernHB/GeoOrigins
-RoxygenNote: 7.1.0
+RoxygenNote: 7.1.1
 Imports:
     grDevices (>= 3.5.3),
     geosphere (>= 1.5-10),
     ks (>= 1.11.7),
     maps (>= 3.3.0),
+    mapdata (>= 2.3.0),
     raster (>= 3.1-5),
     shapes (>= 1.2.5),
     sp (>= 1.4-1),

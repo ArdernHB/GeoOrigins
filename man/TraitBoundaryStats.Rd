@@ -36,8 +36,7 @@ FteydeaThres <- IDbyDistanceDistInputCCV(LatLongs = Fteydea$Info[,2:3],
 TraitBoundaryStats(PlotValCor = FteydeaThres$`Provenancing.Correlation.95\%.Confidence`,
                RawCorArray = Fteydea$Total.Boundary$RawCorData,
                LatLongs = Fteydea$Info[,2:3],
-               RefIDs = Fteydea$Info[,1]
-               )
+               RefIDs = Fteydea$Info[,1])
 
 }
 \author{

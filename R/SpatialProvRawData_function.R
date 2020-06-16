@@ -32,6 +32,7 @@
 #' @param PlotProv logical if the map should be printed with a polygon demarking a contour at a user defined correlation value.
 #' @param PlotValCor numeric correlation value that is used to determine the most likely origin of the specimen. This value can be calculated by using the correct cross-validation method and identifying the correlation value that will correctly identify a desired percentage of specimens (e.g. 95\%).
 #' @param Method determines what kind of correlation coefficient should be used, either "Spearman" or "Pearson". Spearman's ranked correlation coefficient does not assume a linear relationship between geographic and trait distances, whereas Pearson's coefficient does.
+#' @param PacificCent logical determines whether the plotted map and analyses should be centred on the Pacific. Default set to FALSE.
 #' @return If Verbose is TRUE then a dataframe of all values for every sampled grid reference is returned. If Verbose is FALSE then only those grid references with the highest correlation values are returned.
 #' @details When used for shape data and for Procrustes distances this function makes use of the \code{\link[shapes]{procGPA}} and \code{\link[shapes]{procdist}} functions from the \code{shapes} package. When Euclidean distances are employed the \code{\link[stats]{dist}} function of the base \code{stats} package is used.
 #' This method also makes use of the \code{\link[stats]{cor.test}} function from the \code{stats} package. When the \code{PrintProg} is set to TRUE, the \code{\link[svMisc]{progress}} function of the \code{svMisc} package is used.
@@ -90,11 +91,12 @@
 #'
 #' points(x = Rpraetor$Lat.Long$Long[1], y=Rpraetor$Lat.Long$Lat[1], col='blue', pch=16)
 #'
+#'
 #' @export
 #'
 #'
 
-IDbyDistanceRawData <- function(LatLongs, TargetData, RefData, ShapeData=TRUE, ShapeDim=2, DistMethod=c("Euc", "Proc"), LongRange=c(0,0), LatRange=c(0,0), RangeSamp=10, Verbose=TRUE, PrintProg=FALSE, Validate= FALSE, ValidLatLongs, PlotRes=TRUE, HeatHue= c(.15, 1), TileSize=2, PlotProv=FALSE, PlotValCor, Method=c('Spearman', 'Pearson')){
+IDbyDistanceRawData <- function(LatLongs, TargetData, RefData, ShapeData=TRUE, ShapeDim=2, DistMethod=c("Euc", "Proc"), LongRange=c(0,0), LatRange=c(0,0), RangeSamp=10, Verbose=TRUE, PrintProg=FALSE, Validate= FALSE, ValidLatLongs, PlotRes=TRUE, HeatHue= c(.15, 1), TileSize=2, PlotProv=FALSE, PlotValCor, Method=c('Spearman', 'Pearson'), PacificCent=FALSE){
 
   UserInputAssessment(LatLongs, RefData, Method, RefDistMat = 'skip', DistVec = 'skip')
 
@@ -191,7 +193,15 @@ IDbyDistanceRawData <- function(LatLongs, TargetData, RefData, ShapeData=TRUE, S
     LatRangeSteps <- (LatRange[2]-LatRange[1])/(LatSamp-2)
 
     #this output for Lat/Long ways provides what the loop should sequence through
-    Longways <- c(LongRange[1]-LongRangeSteps, seq(LongRange[1], LongRange[2], by = LongRangeSteps), LongRange[2]+LongRangeSteps)
+    if (PacificCent==TRUE){
+      MidRange <- seq(LongRange[1], LongRange[2]+360, by = sqrt(LongRangeSteps^2))
+      MidRange[which(MidRange>=180)] <- MidRange[which(MidRange>=180)]-360
+      Longways <- c(LongRange[1]+LongRangeSteps, MidRange, LongRange[2]-LongRangeSteps)
+    } else {
+      Longways <- c(LongRange[1]-LongRangeSteps, seq(LongRange[1], LongRange[2], by = LongRangeSteps), LongRange[2]+LongRangeSteps)
+    }
+
+
     Latways <- c(LatRange[1]-LatRangeSteps, seq(LatRange[1], LatRange[2], by = LatRangeSteps), LatRange[2]+LatRangeSteps)
 
 
@@ -233,12 +243,22 @@ IDbyDistanceRawData <- function(LatLongs, TargetData, RefData, ShapeData=TRUE, S
   names(CoordsHeat) <- c("Lats", "Longs", "Cor")
 
 
+  if (PacificCent==TRUE){
+    PlottingMap <- "world2Hires"
+    Longways[which(Longways<=0)] <- Longways[which(Longways<=0)]+360
+    CoordsHeat$Longs[which(CoordsHeat$Longs<=0)] <- chr2nu(CoordsHeat$Longs[which(chr2nu(CoordsHeat$Longs)<=0)])+360
+    LatLongs$Longs[which(LatLongs$Longs<=0)] <- chr2nu(LatLongs$Longs[which(chr2nu(LatLongs$Longs)<=0)])+360
+
+  } else {
+    PlottingMap <- "world"
+  }
+
   #if there is not a validating the data then we this means
   #we either have the validation result from a previous analyses and we can plot it
   #or we don't and we're not yet interested in it
   if (Validate==FALSE){
     if (PlotRes==TRUE){
-      maps::map("world", xlim=c(min(Longways), max(Longways)), ylim=c(min(Latways), max(Latways)), interior=FALSE, col="black", bg=graphics::par(bg="white"))
+      maps::map(PlottingMap, xlim=c(min(Longways), max(Longways)), ylim=c(min(Latways), max(Latways)), interior=FALSE, col="black", bg=graphics::par(bg="white"))
 
 
       #creating colour scale from max and min correlation based on which variable we're using
@@ -251,7 +271,7 @@ IDbyDistanceRawData <- function(LatLongs, TargetData, RefData, ShapeData=TRUE, S
       CoordsHeats <- grDevices::hsv(h = HeatHue[1], v = 1, s = CoordsHeatscaled, alpha = HeatHue[2])
 
       #plotting the correlations
-      graphics::points(x = as.character(CoordsHeat$Long), y = as.character(CoordsHeat$Lat), pch=15, col=CoordsHeats,  cex=TileSize)
+      graphics::points(x = as.character(CoordsHeat$Longs), y = as.character(CoordsHeat$Lats), pch=15, col=CoordsHeats,  cex=TileSize)
 
       #here if we want to plot a polygon of the region that
       #approximates the region the specimens came from (with whatever level of confidence we have selected)
@@ -285,9 +305,9 @@ IDbyDistanceRawData <- function(LatLongs, TargetData, RefData, ShapeData=TRUE, S
 
       }
 
-      maps::map("world", xlim=c(min(Longways), max(Longways)), ylim=c(min(Latways), max(Latways)), interior=FALSE, col="black", bg=graphics::par(bg="white"), add=T)
+      maps::map(PlottingMap, xlim=c(min(Longways), max(Longways)), ylim=c(min(Latways), max(Latways)), interior=FALSE, col="black", bg=graphics::par(bg="white"), add=T)
 
-      graphics::points(x = as.character(LatLongs$Long), y = as.character(LatLongs$Lat), pch=23, bg='orange',  cex=1)
+      graphics::points(x = as.character(LatLongs$Longs), y = as.character(LatLongs$Lats), pch=23, bg='orange',  cex=1)
       maps::map.axes()
     }
   }

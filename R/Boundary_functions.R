@@ -76,7 +76,7 @@
 
 
 
-BoundaryFinder <- function(LatLongs, RefDistMat=matrix(), LongRange, LatRange, RangeSamp=10, PrintProg=TRUE, PlotValCor, ExpandMap=c(0,0), DataDump=TRUE, DataDumpPath=NA, StartPoint=1, RefIDs=NULL, IgnorePrompts=FALSE, Method=c('Pearson', 'Spearman')){
+BoundaryFinder <- function(LatLongs, RefDistMat=matrix(), LongRange, LatRange, RangeSamp=10, PrintProg=TRUE, PlotValCor, ExpandMap=c(0,0), DataDump=TRUE, DataDumpPath=NA, StartPoint=1, RefIDs=NULL, IgnorePrompts=FALSE, Method=c('Pearson', 'Spearman'), PacificCent=FALSE){
 
   UserInputAssessment(LatLongs, RefDistMat, Method, RefData = 'skip', DistVec = 'skip')
 
@@ -176,19 +176,36 @@ BoundaryFinder <- function(LatLongs, RefDistMat=matrix(), LongRange, LatRange, R
   LatRangeSteps <- (LatRange[2]-LatRange[1])/(LatSamp-2)
 
   #this output for Lat/Long ways provides what the loop should sequence through
-  Longways <- c(LongRange[1]-LongRangeSteps, seq(LongRange[1], LongRange[2], by = LongRangeSteps), LongRange[2]+LongRangeSteps)
+  if (PacificCent==TRUE){
+    MidRange <- seq(LongRange[1], LongRange[2]+360, by = sqrt(LongRangeSteps^2))
+    MidRange[which(MidRange>=180)] <- MidRange[which(MidRange>=180)]-360
+    Longways <- c(LongRange[1]+LongRangeSteps, MidRange, LongRange[2]-LongRangeSteps)
+  } else {
+    Longways <- c(LongRange[1]-LongRangeSteps, seq(LongRange[1], LongRange[2], by = LongRangeSteps), LongRange[2]+LongRangeSteps)
+  }
+
   Latways <- c(LatRange[1]-LatRangeSteps, seq(LatRange[1], LatRange[2], by = LatRangeSteps), LatRange[2]+LatRangeSteps)
+
+
+  if (PacificCent==TRUE){
+    PlottingMap <- "world2Hires"
+    Longways[which(Longways<=0)] <- Longways[which(Longways<=0)]+360
+    LatLongs$Longs[which(LatLongs$Longs<=0)] <- chr2nu(LatLongs$Longs[which(chr2nu(LatLongs$Longs)<=0)])+360
+
+  } else {
+    PlottingMap <- "world"
+  }
 
   #plotting a map that will later be populated with polygons for each jackknifing iteration in the dd loop below
   if (sum(ExpandMap>0)>0){
-    maps::map("world", xlim=c(min(Longways)-ExpandMap[2], max(Longways)+ExpandMap[2]), ylim=c(min(Latways)-ExpandMap[1], max(Latways)+ExpandMap[1]), interior=FALSE, col="black", bg=graphics::par(bg="white"))
-    graphics::points(x = as.character(LatLongs$Long), y = as.character(LatLongs$Lat), pch=23, bg='blue',  cex=1)
+    maps::map(PlottingMap, xlim=c(min(Longways)-ExpandMap[2], max(Longways)+ExpandMap[2]), ylim=c(min(Latways)-ExpandMap[1], max(Latways)+ExpandMap[1]), interior=FALSE, col="black", bg=graphics::par(bg="white"))
+    graphics::points(x = as.character(LatLongs$Longs), y = as.character(LatLongs$Lats), pch=23, bg='blue',  cex=1)
   } else {
-    maps::map("world", xlim=c(min(Longways), max(Longways)), ylim=c(min(Latways), max(Latways)), interior=FALSE, col="black", bg=graphics::par(bg="white"))
-    graphics::points(x = as.character(LatLongs$Long), y = as.character(LatLongs$Lat), pch=23, bg='blue',  cex=1)
+    maps::map(PlottingMap, xlim=c(min(Longways), max(Longways)), ylim=c(min(Latways), max(Latways)), interior=FALSE, col="black", bg=graphics::par(bg="white"))
+    graphics::points(x = as.character(LatLongs$Longs), y = as.character(LatLongs$Lats), pch=23, bg='blue',  cex=1)
   }
 
-  SpecimenLoc <- cbind(chr2nu(LatLongs$Long), chr2nu(LatLongs$Lat))
+  SpecimenLoc <- cbind(chr2nu(LatLongs$Longs), chr2nu(LatLongs$Lats))
   DistPol <-  sp::Polygon(SpecimenLoc[grDevices::chull(SpecimenLoc),])
   DistPols <-  sp::Polygons(list(DistPol),1)
   DistSpatPol <-  sp::SpatialPolygons(list(DistPols))
@@ -349,8 +366,8 @@ BoundaryFinder <- function(LatLongs, RefDistMat=matrix(), LongRange, LatRange, R
         WarningMessage <- paste(SpecimenMessage, "The resolution used for identifying a region of identification is too low to plot a polygon of the likely region of origin. Therefore, the grid squares that were identified by the r threshold as a possible region of origin have been highlighted. Please set the R.Samp argument to a higher value if a polygon of the most likely region of origin is desired.")
         warning(WarningMessage)
 
-        graphics::points(x = as.character(ApproxOrigin$Long)[1], y = as.character(ApproxOrigin$Lat)[1], pch=21, bg=transpar(Colour ='gold', alpha = dim(RefDistMat)[1]/10),  cex=dim(ApproxOrigin)[1])
-        graphics::points(x = as.character(ApproxOrigin$Long), y = as.character(ApproxOrigin$Lat), pch=21, bg=transpar(Colour ='gold', alpha = dim(RefDistMat)[1]/10),  cex=dim(ApproxOrigin)[1])
+        graphics::points(x = as.character(ApproxOrigin$Longs)[1], y = as.character(ApproxOrigin$Lats)[1], pch=21, bg=transpar(Colour ='gold', alpha = dim(RefDistMat)[1]/10),  cex=dim(ApproxOrigin)[1])
+        graphics::points(x = as.character(ApproxOrigin$Longs), y = as.character(ApproxOrigin$Lats), pch=21, bg=transpar(Colour ='gold', alpha = dim(RefDistMat)[1]/10),  cex=dim(ApproxOrigin)[1])
 
       } else {
         contour.95 <-  Construct_contour(ApproxOrigin[,1:2])
@@ -414,12 +431,12 @@ BoundaryFinder <- function(LatLongs, RefDistMat=matrix(), LongRange, LatRange, R
   BoundScaled <- (max(chr2nu(BoundaryCoordsResTable[,3]))-chr2nu(BoundaryCoordsResTable[,3]))/(max(chr2nu(BoundaryCoordsResTable[,3]))-min(chr2nu(BoundaryCoordsResTable[,3])))
 
 
-  maps::map("world", xlim=c(min(Longways), max(Longways)), ylim=c(min(Latways), max(Latways)), interior=FALSE, col="red", bg=graphics::par(bg="white"))#, add=T, lwd=4)
+  maps::map(PlottingMap, xlim=c(min(Longways), max(Longways)), ylim=c(min(Latways), max(Latways)), interior=FALSE, col="red", bg=graphics::par(bg="white"))#, add=T, lwd=4)
 
   graphics::points(x = as.character(BoundaryCoordsResTable[,2]), y = as.character(BoundaryCoordsResTable[,1]), pch=15, col=grDevices::grey(BoundScaled),  cex=2)
 
-  graphics::points(x = as.character(LatLongs$Long), y = as.character(LatLongs$Lat), pch=23, bg='blue',  cex=1)
-  maps::map("world", xlim=c(min(Longways), max(Longways)), ylim=c(min(Latways), max(Latways)), interior=FALSE, col="red", bg=graphics::par(bg="white"), add=T, lwd=4)
+  graphics::points(x = as.character(LatLongs$Longs), y = as.character(LatLongs$Lats), pch=23, bg='blue',  cex=1)
+  maps::map(PlottingMap, xlim=c(min(Longways), max(Longways)), ylim=c(min(Latways), max(Latways)), interior=FALSE, col="red", bg=graphics::par(bg="white"), add=T, lwd=4)
   maps::map.axes()
 
 
@@ -547,7 +564,7 @@ BoundaryCalculation <- function(MapMatrix, PlotValCor){
 #' @export
 
 
-PlotBoundaries <- function(PlotValCor, DataDump=TRUE, Path=NA, RawCorArray=NA , MapLinesWd=1, TileSize=4, plotLong, plotLat, MapExpansion=c(0,0), LatLongs, RefPchCol='blue',  RefPchSize=1, BoundaryHue = c(1,1)){
+PlotBoundaries <- function(PlotValCor, DataDump=TRUE, Path=NA, RawCorArray=NA , MapLinesWd=1, TileSize=4, plotLong, plotLat, MapExpansion=c(0,0), LatLongs, RefPchCol='blue',  RefPchSize=1, BoundaryHue = c(1,1), PacificCent=FALSE){
 
   colnames(LatLongs) <- c('Lats', 'Longs')
   LatLongs <- as.data.frame(LatLongs)
@@ -607,8 +624,14 @@ PlotBoundaries <- function(PlotValCor, DataDump=TRUE, Path=NA, RawCorArray=NA , 
 
   BoundScaled <- (max(chr2nu(BoundaryCoordsResTable[,3]))-chr2nu(BoundaryCoordsResTable[,3]))/(max(chr2nu(BoundaryCoordsResTable[,3]))-min(chr2nu(BoundaryCoordsResTable[,3])))
 
+  if (PacificCent==TRUE){
+    PlottingMap <- "world2Hires"
+  } else {
+    PlottingMap <- "world"
+  }
 
-  maps::map("world", xlim=c(min(Longways), max(Longways)), ylim=c(min(Latways), max(Latways)), interior=FALSE, col="red", bg=graphics::par(bg="white"))#, add=T, lwd=4)
+
+  maps::map(PlottingMap, xlim=c(min(Longways), max(Longways)), ylim=c(min(Latways), max(Latways)), interior=FALSE, col="red", bg=graphics::par(bg="white"))#, add=T, lwd=4)
 
   BoundaryScale <- grDevices::hsv(h = BoundaryHue[1], v = 1, s = 1-BoundScaled, alpha = BoundaryHue[2])
 
@@ -617,7 +640,7 @@ PlotBoundaries <- function(PlotValCor, DataDump=TRUE, Path=NA, RawCorArray=NA , 
 
 
   graphics::points(x = as.character(LatLongs$Longs), y = as.character(LatLongs$Lats), pch=23, bg=RefPchCol,  cex=RefPchSize)
-  maps::map("world", xlim=c(min(plotLong), max(plotLong)), ylim=c(min(plotLat), max(plotLat)), interior=FALSE, col="grey45", bg=graphics::par(bg="white"), add=T, lwd=MapLinesWd)
+  maps::map(PlottingMap, xlim=c(min(plotLong), max(plotLong)), ylim=c(min(plotLat), max(plotLat)), interior=FALSE, col="grey45", bg=graphics::par(bg="white"), add=T, lwd=MapLinesWd)
 
   maps::map.axes()
 
@@ -655,8 +678,7 @@ PlotBoundaries <- function(PlotValCor, DataDump=TRUE, Path=NA, RawCorArray=NA , 
 #' TraitBoundaryStats(PlotValCor = FteydeaThres$`Provenancing.Correlation.95%.Confidence`,
 #'                RawCorArray = Fteydea$Total.Boundary$RawCorData,
 #'                LatLongs = Fteydea$Info[,2:3],
-#'                RefIDs = Fteydea$Info[,1]
-#'                )
+#'                RefIDs = Fteydea$Info[,1])
 #'
 #' @export
 

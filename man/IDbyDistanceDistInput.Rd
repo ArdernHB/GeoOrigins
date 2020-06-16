@@ -19,7 +19,8 @@ IDbyDistanceDistInput(
   TileSize = 2,
   PlotProv = FALSE,
   PlotValCor,
-  Method = c("Pearson", "Spearman")
+  Method = c("Pearson", "Spearman"),
+  PacificCent = FALSE
 )
 }
 \arguments{
@@ -52,6 +53,8 @@ IDbyDistanceDistInput(
 \item{PlotValCor}{numeric correlation value that is used to determine the most likely origin of the specimen. This value can be calculated by using the correct cross-validation method and identifying the correlation value that will correctly identify a desired percentage of specimens (e.g. 95\%).}
 
 \item{Method}{determines what kind of correlation coefficient should be used, either "Spearman" or "Pearson". Spearman's ranked correlation coefficient does not assume a linear relationship between geographic and trait distances, whereas Pearson's coefficient does.}
+
+\item{PacificCent}{logical determines whether the plotted map and analyses should be centred on the Pacific. Default set to FALSE.}
 }
 \value{
 If Verbose is TRUE then a dataframe of all values for every sampled grid reference is returned. If Verbose is FALSE then only those grid references with the highest correlation values are returned.
