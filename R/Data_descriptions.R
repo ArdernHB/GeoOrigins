@@ -27,7 +27,7 @@
 #' scores for the total dataset and also the Orkney subset. The original landmark data
 #' can be found in the supporting information of Cucchi et al. 2014.
 #'
-#' @format A list of 5 objects:
+#' @format A list of 4 objects:
 #' \describe{
 #'   \item{Info}{Specimen information for \emph{M. arvalis} dataset in the form of a data.frame with 4 columns (Population, Geographic Division, Lat, Long) and 553 rows. Rownames are specimen IDs.}
 #'   \item{Proc.Dist}{Square distance matrix with pairwise Procrustes Distances between all 553 \emph{M. arvalis} specimens.}
