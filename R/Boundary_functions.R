@@ -72,6 +72,7 @@
 #' @import rgeos
 #' @import maps
 #' @import svMisc
+#' @import mapdata
 #' @export
 
 
