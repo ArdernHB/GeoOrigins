@@ -78,7 +78,7 @@
 
 BoundaryFinder <- function(LatLongs, RefDistMat=matrix(), LongRange, LatRange, RangeSamp=10, PrintProg=TRUE, PlotValCor, ExpandMap=c(0,0), DataDump=TRUE, DataDumpPath=NA, StartPoint=1, RefIDs=NULL, IgnorePrompts=FALSE, Method=c('Pearson', 'Spearman'), PacificCent=FALSE){
 
-  UserInputAssessment(LatLongs, RefDistMat, Method, RefData = 'skip', DistVec = 'skip')
+  UserInputAssessment(LatLongs, RefDistMat, Method, RefData = NULL, DistVec = NULL)
 
 
   if (IgnorePrompts==FALSE){
@@ -177,21 +177,26 @@ BoundaryFinder <- function(LatLongs, RefDistMat=matrix(), LongRange, LatRange, R
 
   #this output for Lat/Long ways provides what the loop should sequence through
   if (PacificCent==TRUE){
-    MidRange <- seq(LongRange[1], LongRange[2]+360, by = sqrt(LongRangeSteps^2))
-    MidRange[which(MidRange>=180)] <- MidRange[which(MidRange>=180)]-360
-    Longways <- c(LongRange[1]+LongRangeSteps, MidRange, LongRange[2]-LongRangeSteps)
+    MidRange <- seq(LongRange[1], LongRange[2]+360, by = LongRangeSteps*-1)
+    #MidRange[which(MidRange>=180)] <- MidRange[which(MidRange>=180)]-360
+    Longways <- c(LongRange[1]+LongRangeSteps, MidRange, LongRange[2]+(LongRangeSteps*-1)+360)
   } else {
     Longways <- c(LongRange[1]-LongRangeSteps, seq(LongRange[1], LongRange[2], by = LongRangeSteps), LongRange[2]+LongRangeSteps)
   }
 
   Latways <- c(LatRange[1]-LatRangeSteps, seq(LatRange[1], LatRange[2], by = LatRangeSteps), LatRange[2]+LatRangeSteps)
+  if(sum(Latways<c(-90))>0){
+    Latways <- Latways[-which(Latways<c(-90))]
+  }
+  if(sum(Latways>c(90))>0){
+    Latways <- Latways[-which(Latways>c(90))]
+  }
+
+
 
 
   if (PacificCent==TRUE){
-    PlottingMap <- "world2Hires"
-    Longways[which(Longways<=0)] <- Longways[which(Longways<=0)]+360
-    LatLongs$Longs[which(LatLongs$Longs<=0)] <- chr2nu(LatLongs$Longs[which(chr2nu(LatLongs$Longs)<=0)])+360
-
+    PlottingMap <- 'mapdata::world2Hires'
   } else {
     PlottingMap <- "world"
   }
@@ -616,7 +621,20 @@ PlotBoundaries <- function(PlotValCor, DataDump=TRUE, Path=NA, RawCorArray=NA , 
 
 
   Longways <- c(min(as.numeric(plotLong))-MapExpansion[2], max(as.numeric(plotLong))+MapExpansion[2])
+  if(sum(Longways<c(-179))>0){
+    Longways <- Longways[-which(Longways<c(-179))]
+  }
+  if(sum(Longways>c(179))>0){
+    Longways <- Longways[-which(Longways>c(179))]
+  }
   Latways <- c(min(as.numeric(plotLat))-MapExpansion[1], max(as.numeric(plotLat))+MapExpansion[1])
+  if(sum(Latways<c(-90))>0){
+    Latways <- Latways[-which(Latways<c(-90))]
+  }
+  if(sum(Latways>c(90))>0){
+    Latways <- Latways[-which(Latways>c(90))]
+  }
+
 
 
 
@@ -625,11 +643,10 @@ PlotBoundaries <- function(PlotValCor, DataDump=TRUE, Path=NA, RawCorArray=NA , 
   BoundScaled <- (max(chr2nu(BoundaryCoordsResTable[,3]))-chr2nu(BoundaryCoordsResTable[,3]))/(max(chr2nu(BoundaryCoordsResTable[,3]))-min(chr2nu(BoundaryCoordsResTable[,3])))
 
   if (PacificCent==TRUE){
-    PlottingMap <- "world2Hires"
+    PlottingMap <- "mapdata::world2Hires"
   } else {
     PlottingMap <- "world"
   }
-
 
   maps::map(PlottingMap, xlim=c(min(Longways), max(Longways)), ylim=c(min(Latways), max(Latways)), interior=FALSE, col="red", bg=graphics::par(bg="white"))#, add=T, lwd=4)
 

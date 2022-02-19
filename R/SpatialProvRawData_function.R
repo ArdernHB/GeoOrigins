@@ -98,7 +98,7 @@
 
 IDbyDistanceRawData <- function(LatLongs, TargetData, RefData, ShapeData=TRUE, ShapeDim=2, DistMethod=c("Euc", "Proc"), LongRange=c(0,0), LatRange=c(0,0), RangeSamp=10, Verbose=TRUE, PrintProg=FALSE, Validate= FALSE, ValidLatLongs, PlotRes=TRUE, HeatHue= c(.15, 1), TileSize=2, PlotProv=FALSE, PlotValCor, Method=c('Spearman', 'Pearson'), PacificCent=FALSE){
 
-  UserInputAssessment(LatLongs, RefData, Method, RefDistMat = 'skip', DistVec = 'skip')
+  UserInputAssessment(LatLongs, RefData, Method, RefDistMat = NULL, DistVec = NULL)
 
 
   #making LatLongs a dataframe
@@ -194,9 +194,9 @@ IDbyDistanceRawData <- function(LatLongs, TargetData, RefData, ShapeData=TRUE, S
 
     #this output for Lat/Long ways provides what the loop should sequence through
     if (PacificCent==TRUE){
-      MidRange <- seq(LongRange[1], LongRange[2]+360, by = sqrt(LongRangeSteps^2))
-      MidRange[which(MidRange>=180)] <- MidRange[which(MidRange>=180)]-360
-      Longways <- c(LongRange[1]+LongRangeSteps, MidRange, LongRange[2]-LongRangeSteps)
+      MidRange <- seq(LongRange[1], LongRange[2]+360, by = LongRangeSteps*-1)
+      #MidRange[which(MidRange>=180)] <- MidRange[which(MidRange>=180)]-360
+      Longways <- c(LongRange[1]+LongRangeSteps, MidRange, LongRange[2]+(LongRangeSteps*-1)+360)
     } else {
       Longways <- c(LongRange[1]-LongRangeSteps, seq(LongRange[1], LongRange[2], by = LongRangeSteps), LongRange[2]+LongRangeSteps)
     }
@@ -244,11 +244,7 @@ IDbyDistanceRawData <- function(LatLongs, TargetData, RefData, ShapeData=TRUE, S
 
 
   if (PacificCent==TRUE){
-    PlottingMap <- "world2Hires"
-    Longways[which(Longways<=0)] <- Longways[which(Longways<=0)]+360
-    CoordsHeat$Longs[which(CoordsHeat$Longs<=0)] <- chr2nu(CoordsHeat$Longs[which(chr2nu(CoordsHeat$Longs)<=0)])+360
-    LatLongs$Longs[which(LatLongs$Longs<=0)] <- chr2nu(LatLongs$Longs[which(chr2nu(LatLongs$Longs)<=0)])+360
-
+    PlottingMap <- "mapdata::world2Hires"
   } else {
     PlottingMap <- "world"
   }
@@ -380,7 +376,7 @@ IDbyDistanceRawData <- function(LatLongs, TargetData, RefData, ShapeData=TRUE, S
 
 IDbyDistanceRawDataCCV <- function(LatLongs, RefData, ShapeData=TRUE, ShapeDim=2, DistMethod=c("Euc", "Proc"), Verbose=TRUE, PrintProg=TRUE, ProvConfidence=0.95, Method=c('Spearman', 'Pearson')){
 
-  UserInputAssessment(LatLongs, RefData, Method, RefDistMat = 'skip', DistVec = 'skip')
+  UserInputAssessment(LatLongs, RefData, Method, RefDistMat = NULL, DistVec = NULL)
 
   #making LatLongs a dataframe
   LatLongs <- as.data.frame(LatLongs)

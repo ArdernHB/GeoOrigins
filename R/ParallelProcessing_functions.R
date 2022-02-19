@@ -36,7 +36,7 @@
 
 IDbyDistanceDistInputPar <- function(LatLongsPar, DistDataVecPar, LongRangePar, LatRangePar, RangeSamp=10, MethodPar=c('Spearman', 'Pearson')){
 
-  UserInputAssessment(LatLongs=LatLongsPar, DistVec = DistDataVecPar, Method=MethodPar, RefDistMat = 'skip', RefData = 'skip')
+  UserInputAssessment(LatLongs=LatLongsPar, DistVec = DistDataVecPar, Method=MethodPar, RefDistMat = NULL, RefData = NULL)
 
   #making LatLongs a dataframe
   LatLongsPar <- as.data.frame(LatLongsPar)
@@ -147,7 +147,7 @@ IDbyDistanceDistInputPar <- function(LatLongsPar, DistDataVecPar, LongRangePar, 
 
 IDbyDistanceDistInputCCVPar <- function(LatLongs, DistDataMat, Verbose=TRUE, ProvConfidence=0.95, Method=c('Spearman', 'Pearson')){
 
-  UserInputAssessment(LatLongs, RefDistMat=DistDataMat, Method, RefData = 'skip', DistVec = 'skip')
+  UserInputAssessment(LatLongs, RefDistMat=DistDataMat, Method, RefData = NULL, DistVec = NULL)
 
 
   #making LatLongs a dataframe
@@ -251,7 +251,7 @@ IDbyDistanceDistInputCCVPar <- function(LatLongs, DistDataMat, Verbose=TRUE, Pro
 
 IDbyDistanceRawDataCCVPar <- function(LatLongs, RefData, ShapeData=TRUE, ShapeDim=2, DistMethod=c("Euc", "Proc"), Verbose=TRUE, ProvConfidence=0.95, Method=c('Pearson', 'Spearman')){
 
-  UserInputAssessment(LatLongs, RefData, Method, RefDistMat = 'skip', DistVec = 'skip')
+  UserInputAssessment(LatLongs, RefData, Method, RefDistMat = NULL, DistVec = NULL)
 
 
   #making LatLongs a dataframe
@@ -367,7 +367,17 @@ IDbyDistanceRawDataCCVPar <- function(LatLongs, RefData, ShapeData=TRUE, ShapeDi
 
 BoundaryFinderPar <- function(LatLongs, RefDistMat=matrix(), LongRange, LatRange, RangeSamp=10, ExpandMap=c(0,0), StartPoint=1, RefIDs=NULL, IgnorePrompts=FALSE, Method = c('Spearman', 'Pearson'), PacificCent=FALSE){
 
-  UserInputAssessment(LatLongs, RefDistMat, Method, RefData = 'skip', DistVec = 'skip')
+  #LatLongs = WolfM1Data$Lat.Long[1:10,]
+  #RefDistMat = WolfM1Data$HeatDistMat[1:10,1:10]
+  #LongRange = Long.Range
+  #LatRange = Lat.Range
+  #RangeSamp = LowResRsamp.Rp
+  #ExpandMap = c(0,0)
+  #RefIDs = WolfM1Data$info$ID
+  #IgnorePrompts = TRUE
+  #Method = 'Spearman'
+
+  UserInputAssessment(LatLongs, RefDistMat, Method, RefData = NULL, DistVec = NULL)
 
 
   #making LatLongs a dataframe
@@ -393,12 +403,27 @@ BoundaryFinderPar <- function(LatLongs, RefDistMat=matrix(), LongRange, LatRange
 
   #this output for Lat/Long ways provides what the loop should sequence through
   Longways <- c(LongRange[1]-LongRangeSteps, seq(LongRange[1], LongRange[2], by = LongRangeSteps), LongRange[2]+LongRangeSteps)
+  if(sum(Longways<c(-179))>0){
+    Longways <- Longways[-which(Longways<c(-179))]
+  }
+  if(sum(Longways>c(179))>0){
+    Longways <- Longways[-which(Longways>c(179))]
+  }
+
+
   Latways <- c(LatRange[1]-LatRangeSteps, seq(LatRange[1], LatRange[2], by = LatRangeSteps), LatRange[2]+LatRangeSteps)
+  if(sum(Latways<c(-90))>0){
+    Latways <- Latways[-which(Latways<c(-90))]
+  }
+  if(sum(Latways>c(90))>0){
+    Latways <- Latways[-which(Latways>c(90))]
+  }
 
 
   if (is.null(RefIDs)){
     RefIDs <- 1:dim(RefDistMat)[1]
   }
+
 
   if (sum(rownames(RefDistMat)==c(1:length(rownames(RefDistMat))))==length(rownames(RefDistMat))){
     ArrayDimNames <- list(Latways, Longways, rownames(RefDistMat))
@@ -460,16 +485,23 @@ BoundaryFinderPar <- function(LatLongs, RefDistMat=matrix(), LongRange, LatRange
 
     #this output for Lat/Long ways provides what the loop should sequence through
     if (PacificCent==TRUE){
-      MidRange <- seq(LongRange[1], LongRange[2]+360, by = sqrt(LongRangeSteps^2))
-      MidRange[which(MidRange>=180)] <- MidRange[which(MidRange>=180)]-360
-      Longways <- c(LongRange[1]+LongRangeSteps, MidRange, LongRange[2]-LongRangeSteps)
+      MidRange <- seq(LongRange[1], LongRange[2]+360, by = LongRangeSteps*-1)
+      #MidRange[which(MidRange>=180)] <- MidRange[which(MidRange>=180)]-360
+      Longways <- c(LongRange[1]+LongRangeSteps, MidRange, LongRange[2]+(LongRangeSteps*-1)+360)
     } else {
       Longways <- c(LongRange[1]-LongRangeSteps, seq(LongRange[1], LongRange[2], by = LongRangeSteps), LongRange[2]+LongRangeSteps)
     }
 
 
-
     Latways <- c(LatRangePar[1]-LatRangeSteps, seq(LatRangePar[1], LatRangePar[2], by = LatRangeSteps), LatRangePar[2]+LatRangeSteps)
+
+    if(sum(Latways<c(-90))>0){
+      Latways <- Latways[-which(Latways<c(-90))]
+    }
+    if(sum(Latways>c(90))>0){
+      Latways <- Latways[-which(Latways>c(90))]
+    }
+
 
     CorMatrixRes <- matrix(NA, nrow = length(Latways), ncol = length(Longways))
     rownames(CorMatrixRes) <- Latways

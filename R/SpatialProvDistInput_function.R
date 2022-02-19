@@ -63,7 +63,7 @@
 IDbyDistanceDistInput <- function(LatLongs, DistDataVec, LongRange, LatRange, RangeSamp=10, Verbose=TRUE, PrintProg=FALSE, Validate= FALSE, ValidLatLongs, PlotRes=TRUE, HeatHue= c(.15, 1), TileSize=2, PlotProv=FALSE, PlotValCor, Method=c('Pearson', 'Spearman'), PacificCent=FALSE){
 
 
-  UserInputAssessment(LatLongs, RefData = 'skip', RefDistMat = 'skip', DistVec = DistDataVec, Method)
+  UserInputAssessment(LatLongs, RefData = NULL, RefDistMat = NULL, DistVec = DistDataVec, Method)
 
 
   #making LatLongs a dataframe
@@ -131,15 +131,23 @@ IDbyDistanceDistInput <- function(LatLongs, DistDataVec, LongRange, LatRange, Ra
 
     #this output for Lat/Long ways provides what the loop should sequence through
     if (PacificCent==TRUE){
-      MidRange <- seq(LongRange[1], LongRange[2]+360, by = sqrt(LongRangeSteps^2))
-      MidRange[which(MidRange>=180)] <- MidRange[which(MidRange>=180)]-360
-      Longways <- c(LongRange[1]+LongRangeSteps, MidRange, LongRange[2]-LongRangeSteps)
+      MidRange <- seq(LongRange[1], LongRange[2]+360, by = LongRangeSteps*-1)
+      #MidRange[which(MidRange>=180)] <- MidRange[which(MidRange>=180)]-360
+      Longways <- c(LongRange[1]+LongRangeSteps, MidRange, LongRange[2]+(LongRangeSteps*-1)+360)
     } else {
       Longways <- c(LongRange[1]-LongRangeSteps, seq(LongRange[1], LongRange[2], by = LongRangeSteps), LongRange[2]+LongRangeSteps)
     }
 
 
     Latways <- c(LatRange[1]-LatRangeSteps, seq(LatRange[1], LatRange[2], by = LatRangeSteps), LatRange[2]+LatRangeSteps)
+
+    if(sum(Latways<c(-90))>0){
+      Latways <- Latways[-which(Latways<c(-90))]
+    }
+    if(sum(Latways>c(90))>0){
+      Latways <- Latways[-which(Latways>c(90))]
+    }
+
 
 
     #carrying out iterative analyses across the geographic region defined by LongRange and LatRange
@@ -183,11 +191,7 @@ IDbyDistanceDistInput <- function(LatLongs, DistDataVec, LongRange, LatRange, Ra
   names(CoordsHeat) <- c("Lats", "Longs", "Cor")
 
   if (PacificCent==TRUE){
-    PlottingMap <- "world2Hires"
-    Longways[which(Longways<=0)] <- Longways[which(Longways<=0)]+360
-    CoordsHeat$Longs[which(CoordsHeat$Longs<=0)] <- chr2nu(CoordsHeat$Longs[which(chr2nu(CoordsHeat$Longs)<=0)])+360
-    LatLongs$Longs[which(LatLongs$Longs<=0)] <- chr2nu(LatLongs$Longs[which(chr2nu(LatLongs$Longs)<=0)])+360
-
+    PlottingMap <- "mapdata::world2Hires"
   } else {
     PlottingMap <- "world"
   }
@@ -313,7 +317,7 @@ IDbyDistanceDistInput <- function(LatLongs, DistDataVec, LongRange, LatRange, Ra
 IDbyDistanceDistInputCCV <- function(LatLongs, DistDataMat, Verbose=TRUE, PrintProg=TRUE, ProvConfidence=0.95, Method=c('Pearson', 'Spearman')){
 
 
-  UserInputAssessment(LatLongs, RefData = 'skip', DistVec = 'skip', RefDistMat = DistDataMat, Method)
+  UserInputAssessment(LatLongs, RefData = NULL, DistVec = NULL, RefDistMat = DistDataMat, Method)
 
   #making LatLongs a dataframe
   LatLongs <- as.data.frame(LatLongs)
