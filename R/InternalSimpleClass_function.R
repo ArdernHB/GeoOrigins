@@ -96,12 +96,10 @@ Array2Mat <- function(Array){
 #' @author Ardern Hulme-Beaman
 
 
+UserInputAssessment <- function(LatLongs, RefDistMat=NULL, RefData=NULL, DistVec=NULL, Method){
 
 
-UserInputAssessment <- function(LatLongs, RefDistMat='skip', RefData='skip', DistVec='skip', Method){
-
-
-  if (!(length(RefDistMat)==1)){
+  if (!is.null(RefDistMat)){
     if (dim(LatLongs)[1]!=dim(RefDistMat)[1]){
       stop('Error: the number of latitude and longitude coordinates you have provided do not match the number of specimens in the dataset.
      \n Please check these match and most importantly are in the same order and rerun the function')
@@ -112,7 +110,7 @@ UserInputAssessment <- function(LatLongs, RefDistMat='skip', RefData='skip', Dis
     }
   }
 
-  if (!(length(DistVec)==1)){
+  if (!is.null(DistVec)){
     if (dim(LatLongs)[1]!=length(DistVec)){
       stop('Error: the number of latitude and longitude coordinates you have provided do not match the number of distances provided.
      \n Please check these match and most importantly are in the same order and rerun the function')
@@ -121,7 +119,7 @@ UserInputAssessment <- function(LatLongs, RefDistMat='skip', RefData='skip', Dis
 
 
 
-  if (!(length(RefData)==1)){
+  if (!is.null(RefData)){
     if (length(dim(RefData))==2){
       specimenNo <- 1
     } else {

@@ -6,9 +6,9 @@
 \usage{
 UserInputAssessment(
   LatLongs,
-  RefDistMat = "skip",
-  RefData = "skip",
-  DistVec = "skip",
+  RefDistMat = NULL,
+  RefData = NULL,
+  DistVec = NULL,
   Method
 )
 }
