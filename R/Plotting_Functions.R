@@ -45,7 +45,8 @@ Construct_contour <- function(LatLongs) {
 #' @author Ardern Hulme-Beaman
 #' @keywords internal
 
-PermArraySig <- function(PermArray, TrueMatrix, Sig, Alt='two.sided') {
+PermArraySig <- function(PermArray, TrueMatrix, percentile=NA) {
+  #Sig, Alt='two.sided'
   #Matrix=TrueVarValsMat; Array=PermVarHeat; Sig=SigLevel
 
   AdjMatrix <- matrix(NA, nrow = nrow(TrueMatrix), ncol = ncol(TrueMatrix))
@@ -53,9 +54,19 @@ PermArraySig <- function(PermArray, TrueMatrix, Sig, Alt='two.sided') {
   for (i in 1:dim(TrueMatrix)[1]){
     for(j in 1:dim(TrueMatrix)[2]){
       #i <- j <- 1
-      TRes <- stats::t.test(x = PermArray[i,j,], mu = TrueMatrix[i,j], alternative = Alt)
+      #TRes <- stats::t.test(x = PermArray[i,j,], mu = TrueMatrix[i,j], alternative = Alt)
 
-      AdjMatrix[i,j] <- TRes$p.value<Sig
+      #AdjMatrix[i,j] <- #TRes$p.value<Sig
+      if (is.na(percentile)){
+        #TRes <- stats::t.test(x = PermArray[i,j,], mu = TrueMatrix[i,j], alternative = Alt)
+        #AdjMatrix[i,j] <- TRes$p.value<Sig
+        AdjMatrix[i,j] <- sum(PermArray[i,j,]>TrueMatrix[i,j])/length(PermArray[i,j,])
+      } else {
+        AdjMatrix[i,j] <- TrueMatrix[i,j]<stats::quantile(PermArray[i,j,], probs = percentile)
+
+      }
+
+
     }
   }
 
